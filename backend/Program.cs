@@ -1,12 +1,17 @@
 using Microsoft.EntityFrameworkCore;
+
 using Projet_Sqli.Data;
 using Projet_Sqli.Services;
 
 using Microsoft.AspNetCore.Authentication.Cookies; // authentification cookies
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
+
 
 // Configure HTTPS redirection
 builder.Services.AddHttpsRedirection(options =>
@@ -30,6 +35,20 @@ builder.Services.AddScoped<HistoriqueService>();
 
 
 //Ajout des controlleurs 
+
+// Ajoutez cette ligne pour configurer HTTPS
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.HttpsPort = 5001; // Ou le port que vous souhaitez utiliser pour HTTPS
+});
+
+// Ajouter la configuration du DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Ajouter le service UserService
+builder.Services.AddScoped<UserService>();
+
 builder.Services.AddControllers();
 
 
