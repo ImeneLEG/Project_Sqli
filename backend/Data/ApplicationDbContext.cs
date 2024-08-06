@@ -11,6 +11,8 @@ namespace Backend.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Historique> Historiques { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
