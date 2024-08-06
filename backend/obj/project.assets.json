@@ -4547,11 +4547,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\source\\repos\\Project_Sqli\\backend\\Projet_Sqli.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\Source\\Repos\\Project_Sqli\\backend\\Projet_Sqli.csproj",
       "projectName": "Projet_Sqli",
-      "projectPath": "C:\\Users\\HP\\source\\repos\\Project_Sqli\\backend\\Projet_Sqli.csproj",
+      "projectPath": "C:\\Users\\HP\\Source\\Repos\\Project_Sqli\\backend\\Projet_Sqli.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\source\\repos\\Project_Sqli\\backend\\obj\\",
+      "outputPath": "C:\\Users\\HP\\Source\\Repos\\Project_Sqli\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
