@@ -5,6 +5,13 @@ using Backend.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
+// Ajoutez cette ligne pour configurer HTTPS
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.HttpsPort = 5001; // Ou le port que vous souhaitez utiliser pour HTTPS
+});
+
+
 // Add services to the container.
 
 // Ajoutez cette ligne pour configurer HTTPS
