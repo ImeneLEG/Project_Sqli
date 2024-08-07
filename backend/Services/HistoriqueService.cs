@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Backend.Data;
-using Backend.Entities;
 using Microsoft.EntityFrameworkCore;
+using Projet_Sqli.Data;
+using Projet_Sqli.Entities;
 
-namespace Backend.Services
+namespace Projet_Sqli.Services
 {
     public class HistoriqueService
     {

@@ -1,7 +1,9 @@
-﻿using Backend.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Projet_Sqli.Entities;
 
-namespace Backend.Data
+
+
+namespace Projet_Sqli.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -11,6 +13,8 @@ namespace Backend.Data
         }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
         public DbSet<Historique> Historiques { get; set; }
 
 

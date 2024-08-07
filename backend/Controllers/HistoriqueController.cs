@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Backend.Services;
-using Backend.Entities;
+using Projet_Sqli.Services;
+using Projet_Sqli.Entities;
 
-namespace Backend.Controllers
+namespace Projet_Sqli.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

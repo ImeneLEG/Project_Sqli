@@ -1,11 +1,11 @@
-﻿using Backend.Data;
-using Backend.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Projet_Sqli.Data;
+using Projet_Sqli.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Backend.Services
+namespace Projet_Sqli.Services
 {
     public class UserService
     {
@@ -82,11 +82,11 @@ namespace Backend.Services
         }
     }
 
-        public class MonthlyUserStats
-        {
-            public int Year { get; set; }
-            public int Month { get; set; }
-            public int UserCount { get; set; }
-        }
+    public class MonthlyUserStats
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int UserCount { get; set; }
+    }
 
 }

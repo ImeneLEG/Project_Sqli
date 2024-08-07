@@ -1,7 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Backend.Entities { 
+namespace Projet_Sqli.Entities
+{
     public class Historique
     {
         [Key]
