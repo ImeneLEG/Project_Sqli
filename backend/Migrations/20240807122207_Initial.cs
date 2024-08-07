@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Projet_Sqli.Migrations
 {
     /// <inheritdoc />
@@ -65,6 +67,15 @@ namespace Projet_Sqli.Migrations
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "CreatedAt", "Name", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 8, 7, 13, 22, 7, 2, DateTimeKind.Local).AddTicks(7388), "user", new DateTime(2024, 8, 7, 13, 22, 7, 2, DateTimeKind.Local).AddTicks(7460) },
+                    { 2, new DateTime(2024, 8, 7, 13, 22, 7, 2, DateTimeKind.Local).AddTicks(7466), "admin", new DateTime(2024, 8, 7, 13, 22, 7, 2, DateTimeKind.Local).AddTicks(7470) }
                 });
 
             migrationBuilder.CreateIndex(

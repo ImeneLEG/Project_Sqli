@@ -68,6 +68,22 @@ namespace Projet_Sqli.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 8, 7, 13, 22, 7, 2, DateTimeKind.Local).AddTicks(7388),
+                            Name = "user",
+                            UpdatedAt = new DateTime(2024, 8, 7, 13, 22, 7, 2, DateTimeKind.Local).AddTicks(7460)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 8, 7, 13, 22, 7, 2, DateTimeKind.Local).AddTicks(7466),
+                            Name = "admin",
+                            UpdatedAt = new DateTime(2024, 8, 7, 13, 22, 7, 2, DateTimeKind.Local).AddTicks(7470)
+                        });
                 });
 
             modelBuilder.Entity("Projet_Sqli.Entities.User", b =>

@@ -27,6 +27,12 @@ namespace Projet_Sqli.Data
             modelBuilder.Entity<User>()
                 .Property(u => u.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
+
+            // Seed the database with default roles
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "user", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Role { Id = 2, Name = "admin", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+            );
         }
     }
 }
