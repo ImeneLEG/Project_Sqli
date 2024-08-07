@@ -1,6 +1,4 @@
 @Projet_Sqli_HostAddress = http://localhost:5222
 
-GET {{Projet_Sqli_HostAddress}}/weatherforecast/
-Accept: application/json
 
-###
+

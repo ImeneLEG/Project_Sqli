@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Backend.Services;
-using Backend.Models;
+using Backend.Entities;
 
 namespace Backend.Controllers
 {
@@ -39,4 +39,3 @@ namespace Backend.Controllers
         }
     }
 }
-

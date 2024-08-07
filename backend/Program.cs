@@ -20,7 +20,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Ajouter le service UserService
 builder.Services.AddScoped<UserService>();
 
+
+// Ajouter le service d'historique(imene part) 
+builder.Services.AddScoped<HistoriqueService>();
+
+
+//Ajout des controlleurs 
 builder.Services.AddControllers();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

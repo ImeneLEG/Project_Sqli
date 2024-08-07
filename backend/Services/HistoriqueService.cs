@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Backend.Data;
-using Backend.Models;
+using Backend.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services
@@ -35,6 +35,7 @@ namespace Backend.Services
             return await _context.Historiques
                 .Where(h => h.UserId == userId)
                 .OrderByDescending(h => h.ViewedAt)
+                .Include(h => h.Video)
                 .ToListAsync();
         }
 
