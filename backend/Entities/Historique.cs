@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Backend.Entities
+namespace Projet_Sqli.Entities
 {
     public class Historique
     {

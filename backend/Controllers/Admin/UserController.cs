@@ -1,10 +1,11 @@
-﻿using Backend.Entities;
-using Backend.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Swashbuckle.AspNetCore.Annotations;
+using Projet_Sqli.Services;
+using Projet_Sqli.Entities;
 
-namespace Backend.Controllers.Admin
+namespace Projet_Sqli.Controllers.Admin
 {
     [Route("api/admin/[controller]")]
     [ApiController]
@@ -61,6 +62,13 @@ namespace Backend.Controllers.Admin
         {
             await _userService.DeleteUserAsync(id);
             return NoContent();
+        }
+
+        [HttpGet("stats/{year}")]
+        public async Task<ActionResult<IEnumerable<MonthlyUserStats>>> GetMonthlyUserStats(int year)
+        {
+            var stats = await _userService.GetMonthlyUserStatsAsync(year);
+            return Ok(stats);
         }
     }
 }

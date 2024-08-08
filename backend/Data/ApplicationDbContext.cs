@@ -1,7 +1,8 @@
-﻿using Backend.Entities;
+﻿using Projet_Sqli.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Data
+
+namespace Projet_Sqli.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -11,6 +12,8 @@ namespace Backend.Data
         }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
         public DbSet<Historique> Historiques { get; set; }
 
 
@@ -28,6 +31,7 @@ namespace Backend.Data
 
 
 
+
             // Configuration pour l'entité Historique
             modelBuilder.Entity<Historique>()
                 .Property(h => h.ViewedAt)
@@ -39,16 +43,23 @@ namespace Backend.Data
 
             // Définir les relations et les contraintes
             modelBuilder.Entity<Historique>()
-                .HasOne(h => h.User)
-                .WithMany(u => u.Historiques)
-                .HasForeignKey(h => h.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(h => h.User);
+               // .WithMany(u => u.Historiques)
+               // .HasForeignKey(h => h.UserId)
+              ///  .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Historique>()
-                .HasOne(h => h.Video)
-                .WithMany(v => v.Historiques)
-                .HasForeignKey(h => h.VideoId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Historique>();
+                //.HasOne(h => h.Video)
+                //.WithMany(v => v.Historiques)
+               //// .HasForeignKey(h => h.VideoId)
+                //.OnDelete(DeleteBehavior.Cascade);
+
+
+            // Seed the database with default roles
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "user", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new Role { Id = 2, Name = "admin", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+            );
 
         }
     }
