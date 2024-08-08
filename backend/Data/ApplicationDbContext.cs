@@ -1,5 +1,6 @@
 ﻿using Projet_Sqli.Entities;
 using Microsoft.EntityFrameworkCore;
+using Projet_Sqli.Entities;
 
 
 namespace Projet_Sqli.Data
@@ -17,6 +18,7 @@ namespace Projet_Sqli.Data
         public DbSet<Historique> Historiques { get; set; }
 
 
+        public DbSet<Videos> Videos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -27,6 +29,18 @@ namespace Projet_Sqli.Data
 
             modelBuilder.Entity<User>()
                 .Property(u => u.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            // Configuration for Videos entity
+            modelBuilder.Entity<Videos>()
+                .HasKey(v => v.VideoId);
+
+            modelBuilder.Entity<Videos>()
+                .Property(v => v.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<Videos>()
+                .Property(v => v.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
 
@@ -62,5 +76,7 @@ namespace Projet_Sqli.Data
             );
 
         }
+
+
     }
 }
