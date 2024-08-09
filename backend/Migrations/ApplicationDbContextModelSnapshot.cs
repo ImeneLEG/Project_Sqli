@@ -167,9 +167,6 @@ namespace Projet_Sqli.Migrations
                 b.Property<int>("Duration")
                     .HasColumnType("int");
 
-                b.Property<int>("Id")
-                    .HasColumnType("int");
-
                 b.Property<string>("Likes")
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
