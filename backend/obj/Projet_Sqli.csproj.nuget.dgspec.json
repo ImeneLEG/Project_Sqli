@@ -11,7 +11,7 @@
         "projectName": "Projet_Sqli",
         "projectPath": "C:\\Users\\DELL\\source\\repos\\Project-Sqli\\backend\\Projet_Sqli.csproj",
         "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\Source\\Repos\\Project-Sqli\\backend\\obj\\",
+        "outputPath": "C:\\Users\\DELL\\source\\repos\\Project-Sqli\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
