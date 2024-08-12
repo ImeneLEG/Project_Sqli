@@ -130,5 +130,35 @@ namespace Projet_Sqli.Services
             var timeSpan = System.Xml.XmlConvert.ToTimeSpan(duration);
             return (int)timeSpan.TotalSeconds;
         }
+        // Récupération du nombre de vidéo enrégistré par jour
+        public async Task<Dictionary<DateTime, int>> GetVideoCountPerDayAsync()
+        {
+            return await _dbContext.Videos
+                .GroupBy(v => v.CreatedAt.Date)
+                .Select(g => new { Date = g.Key, Count = g.Count() })
+                .OrderByDescending(x => x.Date)
+                .ToDictionaryAsync(x => x.Date, x => x.Count);
+        }
+
+        // Les vidéos les plus regardées par pays
+        public async Task<Dictionary<string, Videos>> GetMostViewedVideosByCountryAsync()
+        {
+            var result = new Dictionary<string, Videos>();
+
+            foreach (var country in countries)
+            {
+                var mostViewedVideo = await _dbContext.Videos
+                    .Where(v => v.TrendingRanks.Contains(country.Item1)) // Assurez-vous que TrendingRanks contient le code du pays
+                    .OrderByDescending(v => long.Parse(v.Views))
+                    .FirstOrDefaultAsync();
+
+                if (mostViewedVideo != null)
+                {
+                    result.Add(country.Item2, mostViewedVideo);
+                }
+            }
+
+            return result;
+        }
     }
 }
