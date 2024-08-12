@@ -148,7 +148,7 @@ namespace Projet_Sqli.Services
             foreach (var country in countries)
             {
                 var mostViewedVideo = await _dbContext.Videos
-                    .Where(v => v.TrendingRanks.Contains(country.Item1)) // Assurez-vous que TrendingRanks contient le code du pays
+                    .Where(v => v.TrendingRanks == country.Item1) // TrendingRanks doit contenir le code pays et aussi etre de format string
                     .OrderByDescending(v => long.Parse(v.Views))
                     .FirstOrDefaultAsync();
 

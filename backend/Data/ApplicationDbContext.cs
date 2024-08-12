@@ -1,6 +1,6 @@
 ﻿using Projet_Sqli.Entities;
 using Microsoft.EntityFrameworkCore;
-using Projet_Sqli.Entities;
+
 
 
 namespace Projet_Sqli.Data
@@ -57,16 +57,17 @@ namespace Projet_Sqli.Data
 
             // Définir les relations et les contraintes
             modelBuilder.Entity<Historique>()
-                .HasOne(h => h.User);
-               // .WithMany(u => u.Historiques)
-               // .HasForeignKey(h => h.UserId)
-              ///  .OnDelete(DeleteBehavior.Cascade);
+             .HasOne(h => h.User)
+             .WithMany(u => u.Historiques)
+             .HasForeignKey(h => h.UserId)
+             .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Historique>();
-                //.HasOne(h => h.Video)
-                //.WithMany(v => v.Historiques)
-               //// .HasForeignKey(h => h.VideoId)
-                //.OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Historique>()
+                .HasOne(h => h.Video)
+                .WithMany(v => v.Historiques)
+                .HasForeignKey(h => h.VideoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
 
             // Seed the database with default roles

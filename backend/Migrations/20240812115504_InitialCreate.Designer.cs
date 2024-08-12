@@ -12,8 +12,8 @@ using Projet_Sqli.Data;
 namespace Projet_Sqli.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240808211234_new")]
-    partial class @new
+    [Migration("20240812115504_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,79 @@ namespace Projet_Sqli.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Projet_Sqli.Entities.Historique", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VideoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ViewedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("VideoId");
+
+                    b.ToTable("Historiques");
+                });
+
+            modelBuilder.Entity("Projet_Sqli.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 8, 12, 12, 55, 4, 154, DateTimeKind.Local).AddTicks(62),
+                            Name = "user",
+                            UpdatedAt = new DateTime(2024, 8, 12, 12, 55, 4, 154, DateTimeKind.Local).AddTicks(143)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 8, 12, 12, 55, 4, 154, DateTimeKind.Local).AddTicks(265),
+                            Name = "admin",
+                            UpdatedAt = new DateTime(2024, 8, 12, 12, 55, 4, 154, DateTimeKind.Local).AddTicks(269)
+                        });
+                });
 
             modelBuilder.Entity("Projet_Sqli.Entities.User", b =>
                 {
@@ -50,6 +123,9 @@ namespace Projet_Sqli.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -60,6 +136,8 @@ namespace Projet_Sqli.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -135,6 +213,46 @@ namespace Projet_Sqli.Migrations
                     b.HasKey("VideoId");
 
                     b.ToTable("Videos");
+                });
+
+            modelBuilder.Entity("Projet_Sqli.Entities.Historique", b =>
+                {
+                    b.HasOne("Projet_Sqli.Entities.User", "User")
+                        .WithMany("Historiques")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Projet_Sqli.Entities.Videos", "Video")
+                        .WithMany("Historiques")
+                        .HasForeignKey("VideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Video");
+                });
+
+            modelBuilder.Entity("Projet_Sqli.Entities.User", b =>
+                {
+                    b.HasOne("Projet_Sqli.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Projet_Sqli.Entities.User", b =>
+                {
+                    b.Navigation("Historiques");
+                });
+
+            modelBuilder.Entity("Projet_Sqli.Entities.Videos", b =>
+                {
+                    b.Navigation("Historiques");
                 });
 #pragma warning restore 612, 618
         }
