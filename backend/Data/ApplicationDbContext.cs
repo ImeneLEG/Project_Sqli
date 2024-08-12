@@ -1,12 +1,13 @@
 ﻿using Projet_Sqli.Entities;
 using Microsoft.EntityFrameworkCore;
-using Projet_Sqli.Entities;
+
 
 
 namespace Projet_Sqli.Data
 {
     public class ApplicationDbContext : DbContext
     {
+        // c est un fichier dans dbcontext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
