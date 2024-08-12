@@ -82,16 +82,24 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
+
                             CreatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8931),
                             Name = "user",
                             UpdatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8990)
+
+
                         },
                         new
                         {
                             Id = 2,
+
                             CreatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8994),
                             Name = "admin",
                             UpdatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8996)
+
+                           
+
+
                         });
                 });
 
@@ -205,7 +213,11 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Views")
                         .IsRequired()
-                        .HasColumnType("json");
+
+                        .HasColumnType("json")
+
+                        .HasColumnType("nvarchar(max)");
+
 
                     b.HasKey("VideoId");
 
