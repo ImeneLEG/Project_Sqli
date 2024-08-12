@@ -16,7 +16,7 @@ namespace Projet_Sqli.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddHistory(int userId, int videoId)
+        public async Task<IActionResult> AddHistory(int userId, string videoId)
         {
             await _historiqueService.AddHistoryAsync(userId, videoId);
             return Ok();

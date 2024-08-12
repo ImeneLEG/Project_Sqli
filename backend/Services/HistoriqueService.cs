@@ -17,7 +17,7 @@ namespace Projet_Sqli.Services
             _context = context;
         }
 
-        public async Task AddHistoryAsync(int userId, int videoId)
+        public async Task AddHistoryAsync(int userId, string videoId)
         {
             var historique = new Historique
             {

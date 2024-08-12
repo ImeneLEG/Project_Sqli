@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
+using Projet_Sqli.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,10 +18,10 @@ namespace Projet_Sqli.Entities
         public User User { get; set; }
 
         [Required]
-        public int VideoId { get; set; }
+        public string VideoId { get; set; }
 
         [ForeignKey("VideoId")]
-        //public Video Video { get; set; }
+        public Videos Video { get; set; }
 
         [Required]
         public DateTime ViewedAt { get; set; }
