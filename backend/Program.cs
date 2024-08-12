@@ -1,20 +1,40 @@
 using Microsoft.EntityFrameworkCore;
+
 using Projet_Sqli.Data;
 using Projet_Sqli.Services;
 
 using Microsoft.AspNetCore.Authentication.Cookies; // authentification cookies
 
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 
-// Ajoutez cette ligne pour configurer HTTPS
+
+
+
+// Configure HTTPS redirection
 builder.Services.AddHttpsRedirection(options =>
 {
-    options.HttpsPort = 5001; // Ou le port que vous souhaitez utiliser pour HTTPS
+    options.HttpsPort = 5001; // Set your preferred HTTPS port
 });
 
+// Add the configuration for ApplicationDbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add services to the container.
+// Register HttpClient for VideoServices
+builder.Services.AddHttpClient<VideoServices>();
+
+// Add other services
+builder.Services.AddScoped<UserService>();
+
+
+// Ajouter le service d'historique(imene part) 
+builder.Services.AddScoped<HistoriqueService>();
+
+
+//Ajout des controlleurs 
 
 // Ajoutez cette ligne pour configurer HTTPS
 builder.Services.AddHttpsRedirection(options =>
@@ -30,6 +50,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<UserService>();
 
 builder.Services.AddControllers();
+
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

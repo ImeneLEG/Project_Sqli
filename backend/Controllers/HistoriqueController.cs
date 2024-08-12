@@ -37,4 +37,3 @@ namespace Projet_Sqli.Controllers
         }
     }
 }
-

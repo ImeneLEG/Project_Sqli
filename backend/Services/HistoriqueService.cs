@@ -35,6 +35,7 @@ namespace Projet_Sqli.Services
             return await _context.Historiques
                 .Where(h => h.UserId == userId)
                 .OrderByDescending(h => h.ViewedAt)
+               // .Include(h => h.Video)
                 .ToListAsync();
         }
 

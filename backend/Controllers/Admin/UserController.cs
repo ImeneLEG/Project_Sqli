@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
+using Projet_Sqli.Entities;
+using Projet_Sqli.Services;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Swashbuckle.AspNetCore.Annotations;
-using Projet_Sqli.Services;
-using Projet_Sqli.Entities;
+
 
 namespace Projet_Sqli.Controllers.Admin
 {
