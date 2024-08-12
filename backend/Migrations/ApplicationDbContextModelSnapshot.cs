@@ -38,8 +38,9 @@ namespace Projet_Sqli.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VideoId")
-                        .HasColumnType("int");
+                    b.Property<string>("VideoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ViewedAt")
                         .ValueGeneratedOnAdd()
@@ -49,6 +50,8 @@ namespace Projet_Sqli.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VideoId");
 
                     b.ToTable("Historiques");
                 });
@@ -79,16 +82,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 12, 14, 59, 9, 824, DateTimeKind.Local).AddTicks(3519),
+                            CreatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9565),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 12, 14, 59, 9, 824, DateTimeKind.Local).AddTicks(3587)
+                            UpdatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9636)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 12, 14, 59, 9, 824, DateTimeKind.Local).AddTicks(3594),
+                            CreatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9643),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 12, 14, 59, 9, 824, DateTimeKind.Local).AddTicks(3598)
+                            UpdatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9646)
                         });
                 });
 
@@ -212,12 +215,20 @@ namespace Projet_Sqli.Migrations
             modelBuilder.Entity("Projet_Sqli.Entities.Historique", b =>
                 {
                     b.HasOne("Projet_Sqli.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Historiques")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Projet_Sqli.Entities.Videos", "Video")
+                        .WithMany("Historiques")
+                        .HasForeignKey("VideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("User");
+
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("Projet_Sqli.Entities.User", b =>
@@ -229,6 +240,16 @@ namespace Projet_Sqli.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Projet_Sqli.Entities.User", b =>
+                {
+                    b.Navigation("Historiques");
+                });
+
+            modelBuilder.Entity("Projet_Sqli.Entities.Videos", b =>
+                {
+                    b.Navigation("Historiques");
                 });
 #pragma warning restore 612, 618
         }

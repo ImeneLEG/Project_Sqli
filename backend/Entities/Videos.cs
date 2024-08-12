@@ -6,6 +6,8 @@ namespace Projet_Sqli.Entities
     public class Videos
     {
         public int Id { get; set; }
+        public ICollection<Historique> Historiques { get; set; } = new List<Historique>();
+
         public string VideoId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

@@ -87,7 +87,7 @@ namespace Projet_Sqli.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    VideoId = table.Column<int>(type: "int", nullable: false),
+                    VideoId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ViewedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
                 },
@@ -100,6 +100,12 @@ namespace Projet_Sqli.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Historiques_Videos_VideoId",
+                        column: x => x.VideoId,
+                        principalTable: "Videos",
+                        principalColumn: "VideoId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -107,14 +113,19 @@ namespace Projet_Sqli.Migrations
                 columns: new[] { "Id", "CreatedAt", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 8, 12, 14, 59, 9, 824, DateTimeKind.Local).AddTicks(3519), "user", new DateTime(2024, 8, 12, 14, 59, 9, 824, DateTimeKind.Local).AddTicks(3587) },
-                    { 2, new DateTime(2024, 8, 12, 14, 59, 9, 824, DateTimeKind.Local).AddTicks(3594), "admin", new DateTime(2024, 8, 12, 14, 59, 9, 824, DateTimeKind.Local).AddTicks(3598) }
+                    { 1, new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9565), "user", new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9636) },
+                    { 2, new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9643), "admin", new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9646) }
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Historiques_UserId",
                 table: "Historiques",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Historiques_VideoId",
+                table: "Historiques",
+                column: "VideoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",
@@ -129,10 +140,10 @@ namespace Projet_Sqli.Migrations
                 name: "Historiques");
 
             migrationBuilder.DropTable(
-                name: "Videos");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Videos");
 
             migrationBuilder.DropTable(
                 name: "Roles");
