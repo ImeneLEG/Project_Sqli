@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\Projet_Sqli.props" />
-</Project>
