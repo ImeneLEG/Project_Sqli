@@ -119,5 +119,45 @@ namespace Projet_Sqli.Controllers
         }
 
 
+
+        [HttpGet("getCountryByEmail")]
+        public async Task<IActionResult> GetCountryByEmail([FromQuery] string email)
+        {
+            // Rechercher l'utilisateur par email
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé.");
+            }
+
+            // Retourner un message avec le pays de l'utilisateur
+            return Ok($"L'utilisateur avec l'email {email} est enregistré dans le pays : {user.Country}");
+        }
+
+
+
+
+        [HttpGet("getCountryID")]
+        public async Task<IActionResult> GetCountryByIDl([FromQuery] int id)
+        {
+            // Rechercher l'utilisateur par email
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé.");
+            }
+
+            // Retourner un message avec le pays de l'utilisateur
+            return Ok($"L'utilisateur avec l'email {id} est enregistré dans le pays : {user.Country}");
+        }
+
+
+        // utuilisation : 'https://localhost:7275/api/Auth/getCountryID?id=1' \
+
+
     }
 }
