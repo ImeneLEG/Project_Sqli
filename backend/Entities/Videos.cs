@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using System.Text.Json.Serialization;
+
 namespace Projet_Sqli.Entities
 {
     public class Videos
@@ -14,14 +16,18 @@ namespace Projet_Sqli.Entities
         public DateTime PublishedAt { get; set; }
         public string Url { get; set; }
         public string Thumbnail { get; set; }
-        public string Views { get; set; }
-        public string Likes { get; set; }
-        public string Comments { get; set; }
+        [JsonIgnore]
+        public Dictionary<DateTime, int> Views { get; set; }
+        [JsonIgnore]
+        public Dictionary<DateTime, int> Likes { get; set; }
+        [JsonIgnore]
+        public Dictionary<DateTime, int> Comments { get; set; }
         public List<string> Tags { get; set; }
         public int Duration { get; set; }
         public string ChannelId { get; set; }
         public string ChannelTitle { get; set; }
-        public string TrendingRanks { get; set; }
+        [JsonIgnore]
+        public Dictionary<DateTime, int> TrendingRanks { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

@@ -1,6 +1,9 @@
 ﻿using Projet_Sqli.Entities;
 using Microsoft.EntityFrameworkCore;
 
+using System.Text.Json;
+
+
 
 
 namespace Projet_Sqli.Data
@@ -44,11 +47,43 @@ namespace Projet_Sqli.Data
                 .Property(v => v.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
+            // Configuration pour stocker les champs sous forme de JSON
+            modelBuilder.Entity<Videos>(entity =>
+            {
+                entity.Property(e => e.Views)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                        v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
+                    .HasColumnType("json");
+
+
+                entity.Property(e => e.Likes)
+                   .HasConversion(
+                       v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                       v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
+                   .HasColumnType("json");
+
+                entity.Property(e => e.Comments)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                        v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
+                    .HasColumnType("json");
+
+                entity.Property(e => e.TrendingRanks)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                        v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
+                    .HasColumnType("json");
+
+            });
 
 
 
-            // Configuration pour l'entité Historique
-            modelBuilder.Entity<Historique>()
+
+
+
+                // Configuration pour l'entité Historique
+                modelBuilder.Entity<Historique>()
                 .Property(h => h.ViewedAt)
                 .HasDefaultValueSql("GETDATE()");
 

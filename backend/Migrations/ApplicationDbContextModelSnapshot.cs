@@ -82,16 +82,36 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
+<<<<<<< HEAD
                             CreatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9565),
                             Name = "user",
                             UpdatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9636)
+=======
+
+                            CreatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8931),
+                            Name = "user",
+                            UpdatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8990)
+
+
+>>>>>>> 9742b0cafbd2eb7568b843c56bcd2b96486faafe
                         },
                         new
                         {
                             Id = 2,
+<<<<<<< HEAD
                             CreatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9643),
                             Name = "admin",
                             UpdatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9646)
+=======
+
+                            CreatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8994),
+                            Name = "admin",
+                            UpdatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8996)
+
+                           
+
+
+>>>>>>> 9742b0cafbd2eb7568b843c56bcd2b96486faafe
                         });
                 });
 
@@ -205,7 +225,11 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Views")
                         .IsRequired()
+
+                        .HasColumnType("json")
+
                         .HasColumnType("nvarchar(max)");
+
 
                     b.HasKey("VideoId");
 
