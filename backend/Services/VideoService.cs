@@ -86,14 +86,17 @@ namespace Projet_Sqli.Services
                                 PublishedAt = DateTime.TryParse(item["snippet"]?["publishedAt"]?.ToString(), out var publishedDate) ? publishedDate : DateTime.MinValue,
                                 Url = $"https://www.youtube.com/watch?v={videoId}",
                                 Thumbnail = item["snippet"]?["thumbnails"]?["default"]?["url"]?.ToString() ?? string.Empty,
-                                Views = item["statistics"]?["viewCount"]?.ToString() ?? "0",
-                                Likes = item["statistics"]?["likeCount"]?.ToString() ?? "0",
-                                Comments = item["statistics"]?["commentCount"]?.ToString() ?? "0",
+                                Views = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["viewCount"]?.ToString() ?? "0") } },
+                                Likes = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["likeCount"]?.ToString() ?? "0") } },
+
+                                Comments = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["CommentCount"]?.ToString() ?? "0") } },
+
                                 Tags = item["snippet"]?["tags"]?.ToObject<List<string>>() ?? new List<string>(),
                                 Duration = ParseDuration(item["contentDetails"]?["duration"]?.ToString() ?? string.Empty),
                                 ChannelId = item["snippet"]?["channelId"]?.ToString() ?? string.Empty,
                                 ChannelTitle = item["snippet"]?["channelTitle"]?.ToString() ?? string.Empty,
-                                TrendingRanks = item["statistics"]?["trendingRank"]?.ToString() ?? "0",
+                                TrendingRanks = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["TrendingRankCount"]?.ToString() ?? "0") } },
+
                                 CreatedAt = DateTime.Now,
                                 UpdatedAt = DateTime.Now
                             };
@@ -107,14 +110,17 @@ namespace Projet_Sqli.Services
                         else
                         {
                             // Optionally, update some fields if needed
-                            if (existingVideo.TrendingRanks != item["statistics"]?["trendingRank"]?.ToString())
+                            int currentRank = int.Parse(item["statistics"]?["trendingRank"]?.ToString() ?? "0");
+
+                            if (!existingVideo.TrendingRanks.ContainsKey(DateTime.Now) || existingVideo.TrendingRanks[DateTime.Now] != currentRank)
                             {
-                                existingVideo.TrendingRanks = item["statistics"]?["trendingRank"]?.ToString() ?? existingVideo.TrendingRanks;
+                                existingVideo.TrendingRanks[DateTime.Now] = currentRank;
                                 existingVideo.UpdatedAt = DateTime.Now;
 
                                 _dbContext.Videos.Update(existingVideo);
                                 await _dbContext.SaveChangesAsync();
                             }
+
 
                             videos.Add(existingVideo);
                         }
