@@ -1,0 +1,8 @@
+D:\SQLI\Projet\backend\obj\Debug\net8.0\Projet_Sqli.csproj.AssemblyReference.cache
+D:\SQLI\Projet\backend\obj\Debug\net8.0\Projet_Sqli.GeneratedMSBuildEditorConfig.editorconfig
+D:\SQLI\Projet\backend\obj\Debug\net8.0\Projet_Sqli.AssemblyInfoInputs.cache
+D:\SQLI\Projet\backend\obj\Debug\net8.0\Projet_Sqli.AssemblyInfo.cs
+D:\SQLI\Projet\backend\obj\Debug\net8.0\Projet_Sqli.csproj.CoreCompileInputs.cache
+D:\SQLI\Projet\backend\obj\Debug\net8.0\Projet_Sqli.MvcApplicationPartsAssemblyInfo.cs
+D:\SQLI\Projet\backend\obj\Debug\net8.0\Projet_Sqli.MvcApplicationPartsAssemblyInfo.cache
+D:\SQLI\Projet\backend\obj\Debug\net8.0\Projet_Sqli.sourcelink.json
