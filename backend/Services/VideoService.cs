@@ -44,7 +44,7 @@ namespace Projet_Sqli.Services
         public VideoServices(HttpClient httpClient, ApplicationDbContext dbContext)
         {
             _httpClient = httpClient;
-            _apiKey = "AIzaSyDozD3fqe1Aof_tGmEpt8lyYVV_v7ENxuA"; 
+            _apiKey = "AIzaSyDozD3fqe1Aof_tGmEpt8lyYVV_v7ENxuA";
             _dbContext = dbContext;
         }
 
@@ -95,7 +95,13 @@ namespace Projet_Sqli.Services
                                 Duration = ParseDuration(item["contentDetails"]?["duration"]?.ToString() ?? string.Empty),
                                 ChannelId = item["snippet"]?["channelId"]?.ToString() ?? string.Empty,
                                 ChannelTitle = item["snippet"]?["channelTitle"]?.ToString() ?? string.Empty,
-                                TrendingRanks = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["TrendingRankCount"]?.ToString() ?? "0") } },
+                                TrendingRanks = new Dictionary<string, Dictionary<string, int>>
+                                {
+                                    {
+                                        DateTime.Now.ToString("yyyy-MM-dd"),
+                                        new Dictionary<string, int> { { regionCode, int.Parse(item["statistics"]?["trendingRank"]?.ToString() ?? "0") } }
+                                    }
+                                },
 
                                 CreatedAt = DateTime.Now,
                                 UpdatedAt = DateTime.Now
@@ -112,14 +118,22 @@ namespace Projet_Sqli.Services
                             // Optionally, update some fields if needed
                             int currentRank = int.Parse(item["statistics"]?["trendingRank"]?.ToString() ?? "0");
 
-                            if (!existingVideo.TrendingRanks.ContainsKey(DateTime.Now) || existingVideo.TrendingRanks[DateTime.Now] != currentRank)
-                            {
-                                existingVideo.TrendingRanks[DateTime.Now] = currentRank;
-                                existingVideo.UpdatedAt = DateTime.Now;
+                            // Générer la clé de date sous forme de chaîne
+                            var dateKey = DateTime.Now.ToString("yyyy-MM-dd");
 
-                                _dbContext.Videos.Update(existingVideo);
-                                await _dbContext.SaveChangesAsync();
+                            // Vérifier si la clé de date existe déjà
+                            if (!existingVideo.TrendingRanks.ContainsKey(dateKey))
+                            {
+                                existingVideo.TrendingRanks[dateKey] = new Dictionary<string, int>();
                             }
+
+                            // Mettre à jour ou ajouter le rang pour le pays actuel
+                            existingVideo.TrendingRanks[dateKey][regionCode] = currentRank;
+                            existingVideo.UpdatedAt = DateTime.Now;
+
+                            _dbContext.Videos.Update(existingVideo);
+                            await _dbContext.SaveChangesAsync();
+
 
 
                             videos.Add(existingVideo);
@@ -135,6 +149,36 @@ namespace Projet_Sqli.Services
         {
             var timeSpan = System.Xml.XmlConvert.ToTimeSpan(duration);
             return (int)timeSpan.TotalSeconds;
+        }
+        // Récupération du nombre de vidéo enrégistré par jour
+        public async Task<Dictionary<DateTime, int>> GetVideoCountPerDayAsync()
+        {
+            return await _dbContext.Videos
+                .GroupBy(v => v.CreatedAt.Date)
+                .Select(g => new { Date = g.Key, Count = g.Count() })
+                .OrderByDescending(x => x.Date)
+                .ToDictionaryAsync(x => x.Date, x => x.Count);
+        }
+
+        // Les vidéos les plus regardées par pays
+        public async Task<Dictionary<string, Videos>> GetMostViewedVideosByCountryAsync()
+        {
+            var result = new Dictionary<string, Videos>();
+
+            foreach (var country in countries)
+            {
+                var mostViewedVideo = await _dbContext.Videos
+                    //.Where(v => v.TrendingRanks == country.Item1) // TrendingRanks doit contenir le code pays et aussi etre de format string
+                    //.OrderByDescending(v => long.Parse(v.Views))
+                    .FirstOrDefaultAsync();
+
+                if (mostViewedVideo != null)
+                {
+                    result.Add(country.Item2, mostViewedVideo);
+                }
+            }
+
+            return result;
         }
     }
 }

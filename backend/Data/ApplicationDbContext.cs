@@ -10,6 +10,7 @@ namespace Projet_Sqli.Data
 {
     public class ApplicationDbContext : DbContext
     {
+        // c est un fichier dans dbcontext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -69,10 +70,10 @@ namespace Projet_Sqli.Data
                     .HasColumnType("json");
 
                 entity.Property(e => e.TrendingRanks)
-                    .HasConversion(
-                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                        v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
-                    .HasColumnType("json");
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, int>>>(v, (JsonSerializerOptions)null))
+                .HasColumnType("json");
 
             });
 
@@ -81,10 +82,10 @@ namespace Projet_Sqli.Data
 
 
 
-                // Configuration pour l'entité Historique
-                modelBuilder.Entity<Historique>()
-                .Property(h => h.ViewedAt)
-                .HasDefaultValueSql("GETDATE()");
+            // Configuration pour l'entité Historique
+            modelBuilder.Entity<Historique>()
+            .Property(h => h.ViewedAt)
+            .HasDefaultValueSql("GETDATE()");
 
             modelBuilder.Entity<Historique>()
                 .Property(h => h.CreatedAt)

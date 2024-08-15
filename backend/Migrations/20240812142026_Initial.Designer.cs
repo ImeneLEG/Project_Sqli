@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_Sqli.Data;
 
@@ -11,9 +12,11 @@ using Projet_Sqli.Data;
 namespace Projet_Sqli.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240812142026_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,16 +85,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 13, 17, 50, 21, 80, DateTimeKind.Local).AddTicks(8204),
+                            CreatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9565),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 13, 17, 50, 21, 80, DateTimeKind.Local).AddTicks(8244)
+                            UpdatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9636)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 13, 17, 50, 21, 80, DateTimeKind.Local).AddTicks(8247),
+                            CreatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9643),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 13, 17, 50, 21, 80, DateTimeKind.Local).AddTicks(8248)
+                            UpdatedAt = new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9646)
                         });
                 });
 
@@ -154,7 +157,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Comments")
                         .IsRequired()
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -173,7 +176,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Likes")
                         .IsRequired()
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime2");
@@ -192,7 +195,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("TrendingRanks")
                         .IsRequired()
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -205,7 +208,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Views")
                         .IsRequired()
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("VideoId");
 

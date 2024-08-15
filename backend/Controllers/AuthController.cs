@@ -71,16 +71,14 @@ namespace Projet_Sqli.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok($"Inscription réussie.Vous êtes {user.Role.Name}");
+            return Ok( new { role = $"{user.Role.Name}" , email=$"{user.Email}", country=$"{user.Country}" , username=$"{user.Username}" });
         }
 
 
 
         [HttpPost("login")]
-
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            // Rechercher l'utilisateur par email
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
@@ -90,25 +88,27 @@ namespace Projet_Sqli.Controllers
                 return BadRequest("Email ou mot de passe incorrect.");
             }
 
-            // Créer les claims pour l'utilisateur
-            var claims = new List<Claim>
+            // Créer les claims pour l'utilisateur, y compris le pays
+                    var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role.Name)
+                new Claim(ClaimTypes.Role, user.Role.Name),
+                new Claim("Country", user.Country) // Ajouter le pays aux claims
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = true // Maintenir la session
+                IsPersistent = true
             };
 
-            // Sign in the user
+            // Authentifier l'utilisateur
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            return Ok(new { Message = "Connexion réussie.", RoleMessage = $"Vous êtes {user.Role.Name}." });
+            return Ok(new { Message = "Connexion réussie.", RoleMessage = $"Vous êtes {user.Role.Name}.", Country = $"{user.Country}" , Email = $"{user.Email}" });
         }
+
 
 
         [HttpPost("logout")]
@@ -117,6 +117,49 @@ namespace Projet_Sqli.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok("Déconnexion réussie.");
         }
+
+
+
+        [HttpGet("getCountryByEmail")]
+        public async Task<IActionResult> GetCountryByEmail([FromQuery] string email)
+        {
+            // Rechercher l'utilisateur par email
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé.");
+            }
+
+            // Retourner un message avec le pays de l'utilisateur
+            return Ok($"L'utilisateur avec l'email {email} est enregistré dans le pays : {user.Country}");
+        }
+
+
+
+
+        [HttpGet("getCountryID")]
+        public async Task<IActionResult> GetCountryByIDl([FromQuery] int id)
+        {
+            // Rechercher l'utilisateur par email
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé.");
+            }
+
+            // Retourner un message avec le pays de l'utilisateur
+            return Ok(new
+            {
+                Country = $"{user.Country}"
+            });
+        }
+
+
+        // utuilisation : 'https://localhost:7275/api/Auth/getCountryID?id=1' \
 
 
     }

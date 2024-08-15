@@ -27,7 +27,8 @@ namespace Projet_Sqli.Entities
         public string ChannelId { get; set; }
         public string ChannelTitle { get; set; }
         [JsonIgnore]
-        public Dictionary<DateTime, int> TrendingRanks { get; set; }
+        // TrendingRanks sous forme de JSON
+        public Dictionary<string, Dictionary<string, int>> TrendingRanks { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
