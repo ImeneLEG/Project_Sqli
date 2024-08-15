@@ -25,7 +25,7 @@ namespace Projet_Sqli.Services
             new Tuple<string, string>("FR", "France"),
             new Tuple<string, string>("RU", "Russia"),
             new Tuple<string, string>("MA", "Morocco"),
-            new Tuple<string, string>("BF", "Burkina Faso"),
+            new Tuple<string, string>("NO", "Norway"),
             new Tuple<string, string>("CN", "China"),
             new Tuple<string, string>("JP", "Japan"),
             new Tuple<string, string>("IN", "India"),
@@ -88,21 +88,12 @@ namespace Projet_Sqli.Services
                                 Thumbnail = item["snippet"]?["thumbnails"]?["default"]?["url"]?.ToString() ?? string.Empty,
                                 Views = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["viewCount"]?.ToString() ?? "0") } },
                                 Likes = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["likeCount"]?.ToString() ?? "0") } },
-
-                                Comments = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["CommentCount"]?.ToString() ?? "0") } },
-
+                                Comments = new Dictionary<DateTime, int> { { DateTime.Now, int.Parse(item["statistics"]?["commentCount"]?.ToString() ?? "0") } },
                                 Tags = item["snippet"]?["tags"]?.ToObject<List<string>>() ?? new List<string>(),
                                 Duration = ParseDuration(item["contentDetails"]?["duration"]?.ToString() ?? string.Empty),
                                 ChannelId = item["snippet"]?["channelId"]?.ToString() ?? string.Empty,
                                 ChannelTitle = item["snippet"]?["channelTitle"]?.ToString() ?? string.Empty,
-                                TrendingRanks = new Dictionary<string, Dictionary<string, int>>
-                                {
-                                    {
-                                        DateTime.Now.ToString("yyyy-MM-dd"),
-                                        new Dictionary<string, int> { { regionCode, int.Parse(item["statistics"]?["trendingRank"]?.ToString() ?? "0") } }
-                                    }
-                                },
-
+                                TrendingRanks = new Dictionary<string, Dictionary<string, int>>(),  // Initialiser sans classement
                                 CreatedAt = DateTime.Now,
                                 UpdatedAt = DateTime.Now
                             };
@@ -115,9 +106,6 @@ namespace Projet_Sqli.Services
                         }
                         else
                         {
-                            // Optionally, update some fields if needed
-                            int currentRank = int.Parse(item["statistics"]?["trendingRank"]?.ToString() ?? "0");
-
                             // Générer la clé de date sous forme de chaîne
                             var dateKey = DateTime.Now.ToString("yyyy-MM-dd");
 
@@ -127,23 +115,61 @@ namespace Projet_Sqli.Services
                                 existingVideo.TrendingRanks[dateKey] = new Dictionary<string, int>();
                             }
 
-                            // Mettre à jour ou ajouter le rang pour le pays actuel
-                            existingVideo.TrendingRanks[dateKey][regionCode] = currentRank;
                             existingVideo.UpdatedAt = DateTime.Now;
 
                             _dbContext.Videos.Update(existingVideo);
                             await _dbContext.SaveChangesAsync();
 
-
-
                             videos.Add(existingVideo);
                         }
                     }
                 }
+
+                // Une fois toutes les vidéos récupérées, calculez le classement
+                var trendingRanks = CalculateTrendingRanks(regionCode, videos);
+
+                // Mettre à jour chaque vidéo avec son rang calculé
+                foreach (var video in videos)
+                {
+                    var dateKey = DateTime.Now.ToString("yyyy-MM-dd");
+                    if (!video.TrendingRanks.ContainsKey(dateKey))
+                    {
+                        video.TrendingRanks[dateKey] = new Dictionary<string, int>();
+                    }
+                    video.TrendingRanks[dateKey][regionCode] = trendingRanks[video.VideoId];
+                    _dbContext.Videos.Update(video);
+                }
+
+                await _dbContext.SaveChangesAsync();
             }
 
             return videos;
         }
+
+
+
+
+        // Calculer le classement des vidéos
+        private Dictionary<string, int> CalculateTrendingRanks(string regionCode, List<Videos> videos)
+        {
+            // Tri des vidéos par nombre de vues décroissant pour un pays donné
+            var rankedVideos = videos
+                .OrderByDescending(v => v.Views.LastOrDefault().Value)
+                .ToList();
+
+            // Générer le classement
+            var ranks = new Dictionary<string, int>();
+            for (int i = 0; i < rankedVideos.Count; i++)
+            {
+                ranks[rankedVideos[i].VideoId] = i + 1;
+            }
+
+            return ranks;
+        }
+
+
+
+        // Analyser la durée de la vidéo
 
         private int ParseDuration(string duration)
         {
@@ -158,7 +184,10 @@ namespace Projet_Sqli.Services
                 .Select(g => new { Date = g.Key, Count = g.Count() })
                 .OrderByDescending(x => x.Date)
                 .ToDictionaryAsync(x => x.Date, x => x.Count);
+
         }
+
+
 
         // Les vidéos les plus regardées par pays
         public async Task<Dictionary<string, Videos>> GetMostViewedVideosByCountryAsync()

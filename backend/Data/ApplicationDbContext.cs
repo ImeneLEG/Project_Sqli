@@ -20,8 +20,6 @@ namespace Projet_Sqli.Data
 
         public DbSet<Role> Roles { get; set; }
         public DbSet<Historique> Historiques { get; set; }
-
-
         public DbSet<Videos> Videos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
