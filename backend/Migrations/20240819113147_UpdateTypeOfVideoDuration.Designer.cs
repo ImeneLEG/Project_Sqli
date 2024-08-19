@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_Sqli.Data;
 
@@ -11,9 +12,11 @@ using Projet_Sqli.Data;
 namespace Projet_Sqli.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240819113147_UpdateTypeOfVideoDuration")]
+    partial class UpdateTypeOfVideoDuration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,36 +24,6 @@ namespace Projet_Sqli.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Projet_Sqli.Entities.Favoris", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSDATETIME()");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("VideoId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Favoris");
-                });
 
             modelBuilder.Entity("Projet_Sqli.Entities.Historique", b =>
                 {
@@ -112,18 +85,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 18, 0, 10, 14, 132, DateTimeKind.Local).AddTicks(6495),
+                            CreatedAt = new DateTime(2024, 8, 19, 12, 31, 47, 532, DateTimeKind.Local).AddTicks(4129),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 18, 0, 10, 14, 132, DateTimeKind.Local).AddTicks(6554)
-            
+                            UpdatedAt = new DateTime(2024, 8, 19, 12, 31, 47, 532, DateTimeKind.Local).AddTicks(4173)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 18, 0, 10, 14, 132, DateTimeKind.Local).AddTicks(6556),
+                            CreatedAt = new DateTime(2024, 8, 19, 12, 31, 47, 532, DateTimeKind.Local).AddTicks(4176),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 18, 0, 10, 14, 132, DateTimeKind.Local).AddTicks(6557)
-
+                            UpdatedAt = new DateTime(2024, 8, 19, 12, 31, 47, 532, DateTimeKind.Local).AddTicks(4178)
                         });
                 });
 

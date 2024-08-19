@@ -48,6 +48,10 @@ namespace Projet_Sqli.Services
             _dbContext = dbContext;
         }
 
+
+   
+
+
         public async Task<List<Videos>> GetTrendingVideosAsync(string regionCode)
         {
             // Check if the region code is valid
@@ -66,8 +70,9 @@ namespace Projet_Sqli.Services
 
             if (items != null)
             {
-                foreach (var item in items)
+                for (int i = 0; i < items.Count(); i++)
                 {
+                    var item = items[i];
                     if (item != null)
                     {
                         var videoId = item["id"]?.ToString() ?? string.Empty;
@@ -98,6 +103,13 @@ namespace Projet_Sqli.Services
                                 UpdatedAt = DateTime.Now
                             };
 
+                            // Set the ranking based on the index from the API response
+                            var dateKey = DateTime.Now.ToString("yyyy-MM-dd");
+                            video.TrendingRanks[dateKey] = new Dictionary<string, int>
+                    {
+                        { regionCode, i + 1 }
+                    };
+
                             // Add the video to the database
                             _dbContext.Videos.Add(video);
                             await _dbContext.SaveChangesAsync();
@@ -115,6 +127,8 @@ namespace Projet_Sqli.Services
                                 existingVideo.TrendingRanks[dateKey] = new Dictionary<string, int>();
                             }
 
+                            // Set the ranking based on the index from the API response
+                            existingVideo.TrendingRanks[dateKey][regionCode] = i + 1;
                             existingVideo.UpdatedAt = DateTime.Now;
 
                             _dbContext.Videos.Update(existingVideo);
@@ -124,50 +138,10 @@ namespace Projet_Sqli.Services
                         }
                     }
                 }
-
-                // Une fois toutes les vidéos récupérées, calculez le classement
-                var trendingRanks = CalculateTrendingRanks(regionCode, videos);
-
-                // Mettre à jour chaque vidéo avec son rang calculé
-                foreach (var video in videos)
-                {
-                    var dateKey = DateTime.Now.ToString("yyyy-MM-dd");
-                    if (!video.TrendingRanks.ContainsKey(dateKey))
-                    {
-                        video.TrendingRanks[dateKey] = new Dictionary<string, int>();
-                    }
-                    video.TrendingRanks[dateKey][regionCode] = trendingRanks[video.VideoId];
-                    _dbContext.Videos.Update(video);
-                }
-
-                await _dbContext.SaveChangesAsync();
             }
 
             return videos;
         }
-
-
-
-
-        // Calculer le classement des vidéos
-        private Dictionary<string, int> CalculateTrendingRanks(string regionCode, List<Videos> videos)
-        {
-            // Tri des vidéos par nombre de vues décroissant pour un pays donné
-            var rankedVideos = videos
-                .OrderByDescending(v => v.Views.LastOrDefault().Value)
-                .ToList();
-
-            // Générer le classement
-            var ranks = new Dictionary<string, int>();
-            for (int i = 0; i < rankedVideos.Count; i++)
-            {
-                ranks[rankedVideos[i].VideoId] = i + 1;
-            }
-
-            return ranks;
-        }
-
-
 
         // Analyser la durée de la vidéo
 

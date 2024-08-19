@@ -17,6 +17,21 @@ namespace Projet_Sqli.Services
             _context = context;
         }
 
+
+        // Méthode pour supprimer une vidéo spécifique de l'historique d'un utilisateur
+        public async Task RemoveVideoFromHistoryAsync(int userId, string videoId)
+        {
+            var historique = await _context.Historiques
+                .FirstOrDefaultAsync(h => h.UserId == userId && h.VideoId == videoId);
+
+            if (historique != null)
+            {
+                _context.Historiques.Remove(historique);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
         public async Task AddHistoryAsync(int userId, string videoId)
         {
             var historique = new Historique
