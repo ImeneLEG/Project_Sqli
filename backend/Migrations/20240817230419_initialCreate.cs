@@ -8,11 +8,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Projet_Sqli.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Favoris",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    VideoId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "SYSDATETIME()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Favoris", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -113,8 +129,8 @@ namespace Projet_Sqli.Migrations
                 columns: new[] { "Id", "CreatedAt", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9565), "user", new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9636) },
-                    { 2, new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9643), "admin", new DateTime(2024, 8, 12, 15, 20, 26, 41, DateTimeKind.Local).AddTicks(9646) }
+                    { 1, new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(8888), "user", new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9027) },
+                    { 2, new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9031), "admin", new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9033) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -136,6 +152,9 @@ namespace Projet_Sqli.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Favoris");
+
             migrationBuilder.DropTable(
                 name: "Historiques");
 

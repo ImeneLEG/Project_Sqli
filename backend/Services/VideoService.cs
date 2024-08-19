@@ -209,5 +209,13 @@ namespace Projet_Sqli.Services
 
             return result;
         }
+
+        //récuperation des videos par id 
+        public async Task<Videos> GetVideoByIdAsync(string videoId)
+        {
+            return await _dbContext.Videos
+                                   .FirstOrDefaultAsync(v => v.VideoId == videoId);
+        }
+
     }
 }

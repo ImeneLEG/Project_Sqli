@@ -48,6 +48,19 @@ namespace Projet_Sqli.Controllers
             }
         }
 
+        [HttpGet("{videoId}")]
+        public async Task<IActionResult> GetVideoById(string videoId)
+        {
+            var video = await _videoServices.GetVideoByIdAsync(videoId);
+
+            if (video == null)
+            {
+                return NotFound(new { Message = "Video not found." });
+            }
+
+            return Ok(video);
+        }
+
         // Action pour utliser le service du chargement des viéos les plus regardées par pays
         [HttpGet("most-viewed-by-country")]
         public async Task<IActionResult> GetMostViewedVideosByCountry()

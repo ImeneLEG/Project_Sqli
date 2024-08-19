@@ -22,6 +22,36 @@ namespace Projet_Sqli.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Projet_Sqli.Entities.Favoris", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSDATETIME()");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VideoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Favoris");
+                });
+
             modelBuilder.Entity("Projet_Sqli.Entities.Historique", b =>
                 {
                     b.Property<int>("Id")
@@ -82,16 +112,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 13, 17, 50, 21, 80, DateTimeKind.Local).AddTicks(8204),
+                            CreatedAt = new DateTime(2024, 8, 18, 0, 10, 14, 132, DateTimeKind.Local).AddTicks(6495),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 13, 17, 50, 21, 80, DateTimeKind.Local).AddTicks(8244)
+                            UpdatedAt = new DateTime(2024, 8, 18, 0, 10, 14, 132, DateTimeKind.Local).AddTicks(6554)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 13, 17, 50, 21, 80, DateTimeKind.Local).AddTicks(8247),
+                            CreatedAt = new DateTime(2024, 8, 18, 0, 10, 14, 132, DateTimeKind.Local).AddTicks(6556),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 13, 17, 50, 21, 80, DateTimeKind.Local).AddTicks(8248)
+                            UpdatedAt = new DateTime(2024, 8, 18, 0, 10, 14, 132, DateTimeKind.Local).AddTicks(6557)
                         });
                 });
 

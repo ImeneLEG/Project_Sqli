@@ -33,6 +33,9 @@ builder.Services.AddScoped<UserService>();
 // Ajouter le service d'historique(imene part) 
 builder.Services.AddScoped<HistoriqueService>();
 
+//Ajouter le Service pour Favoris 
+builder.Services.AddScoped<FavorisService>();
+
 
 //Ajout des controlleurs 
 

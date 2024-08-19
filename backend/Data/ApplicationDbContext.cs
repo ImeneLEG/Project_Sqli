@@ -1,29 +1,26 @@
 ﻿using Projet_Sqli.Entities;
 using Microsoft.EntityFrameworkCore;
-
 using System.Text.Json;
-
-
-
+using System.Text.Json.Serialization;
 
 namespace Projet_Sqli.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        // c est un fichier dans dbcontext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
         public DbSet<User> Users { get; set; }
-
         public DbSet<Role> Roles { get; set; }
         public DbSet<Historique> Historiques { get; set; }
         public DbSet<Videos> Videos { get; set; }
+        public DbSet<Favoris> Favoris { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             // Configuration pour l'entité User
             modelBuilder.Entity<User>()
                 .Property(u => u.CreatedAt)
@@ -75,15 +72,10 @@ namespace Projet_Sqli.Data
 
             });
 
-
-
-
-
-
             // Configuration pour l'entité Historique
             modelBuilder.Entity<Historique>()
-            .Property(h => h.ViewedAt)
-            .HasDefaultValueSql("GETDATE()");
+                .Property(h => h.ViewedAt)
+                .HasDefaultValueSql("GETDATE()");
 
             modelBuilder.Entity<Historique>()
                 .Property(h => h.CreatedAt)
@@ -91,10 +83,10 @@ namespace Projet_Sqli.Data
 
             // Définir les relations et les contraintes
             modelBuilder.Entity<Historique>()
-             .HasOne(h => h.User)
-             .WithMany(u => u.Historiques)
-             .HasForeignKey(h => h.UserId)
-             .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(h => h.User)
+                .WithMany(u => u.Historiques)
+                .HasForeignKey(h => h.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Historique>()
                 .HasOne(h => h.Video)
@@ -102,16 +94,23 @@ namespace Projet_Sqli.Data
                 .HasForeignKey(h => h.VideoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Configuration for Favoris entity
+            modelBuilder.Entity<Favoris>()
+                .Property(f => f.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
 
+            modelBuilder.Entity<Favoris>()
+                .Property(f => f.UpdatedAt)
+                .HasDefaultValueSql("SYSDATETIME()");
+
+            modelBuilder.Entity<Favoris>()
+                .HasKey(f => f.Id);
 
             // Seed the database with default roles
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = 1, Name = "user", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
                 new Role { Id = 2, Name = "admin", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
             );
-
         }
-
-
     }
 }
