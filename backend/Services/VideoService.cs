@@ -47,6 +47,17 @@ namespace Projet_Sqli.Services
             _apiKey = "AIzaSyDozD3fqe1Aof_tGmEpt8lyYVV_v7ENxuA";
             _dbContext = dbContext;
         }
+
+
+        public async Task<Videos> GetVideoByIdAsync(string videoId)
+        {
+            return await _dbContext.Videos
+                .FirstOrDefaultAsync(v => v.VideoId == videoId);
+        }
+
+
+
+
         public async Task<List<Videos>> GetTrendingVideosAsync(string regionCode)
         {
             // Check if the region code is valid
@@ -137,12 +148,6 @@ namespace Projet_Sqli.Services
 
             return videos;
         }
-
-
-
-
-       
-
 
         // Analyser la durée de la vidéo
 

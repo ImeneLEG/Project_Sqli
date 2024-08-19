@@ -15,12 +15,15 @@ namespace Projet_Sqli.Controllers
             _historiqueService = historiqueService;
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> AddHistory(int userId, string videoId)
+
+        // Nouvel endpoint pour supprimer une vidéo spécifique de l'historique
+        [HttpDelete("user/{userId}/video/{videoId}")]
+        public async Task<IActionResult> RemoveVideoFromHistory(int userId, string videoId)
         {
-            await _historiqueService.AddHistoryAsync(userId, videoId);
+            await _historiqueService.RemoveVideoFromHistoryAsync(userId, videoId);
             return Ok();
         }
+
 
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<List<Historique>>> GetHistoryByUser(int userId)

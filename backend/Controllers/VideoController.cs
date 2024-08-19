@@ -9,11 +9,30 @@ namespace Projet_Sqli.Controllers
     public class VideosController : ControllerBase
     {
         private readonly VideoServices _videoServices;
+        private readonly HistoriqueService _historiqueService;
 
-        public VideosController(VideoServices videoServices)
+        public VideosController(VideoServices videoService, HistoriqueService historiqueService)
         {
-            _videoServices = videoServices;
+            _videoServices = videoService;
+            _historiqueService = historiqueService;
         }
+
+
+        [HttpGet("watch/{videoId}")]
+        public async Task<IActionResult> WatchVideo(int userId, string videoId)
+        {
+            var video = await _videoServices.GetVideoByIdAsync(videoId);
+            if (video == null)
+            {
+                return NotFound();
+            }
+
+            await _historiqueService.AddHistoryAsync(userId, videoId);
+
+            return Ok(video);
+        }
+
+
 
         [HttpGet("trending/{regionCode}")]
         public async Task<IActionResult> GetTrendingVideos(string regionCode)
