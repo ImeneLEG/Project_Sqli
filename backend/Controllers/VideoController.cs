@@ -10,11 +10,13 @@ namespace Projet_Sqli.Controllers
     {
         private readonly VideoServices _videoServices;
         private readonly HistoriqueService _historiqueService;
+        private readonly VideoRetrievalService _videoRetrievalService;
 
-        public VideosController(VideoServices videoService, HistoriqueService historiqueService)
+        public VideosController(VideoServices videoService, HistoriqueService historiqueService, VideoRetrievalService videoRetrievalService)
         {
             _videoServices = videoService;
             _historiqueService = historiqueService;
+            _videoRetrievalService = videoRetrievalService;
         }
 
 
@@ -94,5 +96,7 @@ namespace Projet_Sqli.Controllers
                 return StatusCode(500, "Une erreur s'est produite lors de la récupération des vidéos les plus regardées par pays.");
             }
         }
+
+    
     }
 }

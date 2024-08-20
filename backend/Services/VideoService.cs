@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Projet_Sqli.Entities;
 using Projet_Sqli.Data;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+
 
 namespace Projet_Sqli.Services
 {
@@ -15,9 +18,11 @@ namespace Projet_Sqli.Services
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
         private readonly ApplicationDbContext _dbContext;
+        private readonly ILogger<VideoServices> _logger;
+
 
         // Define the list of country codes and names
-        private readonly List<Tuple<string, string>> countries = new List<Tuple<string, string>>
+        public readonly List<Tuple<string, string>> countries = new List<Tuple<string, string>>
         {
             new Tuple<string, string>("US", "United States"),
             new Tuple<string, string>("GB", "United Kingdom"),
@@ -26,7 +31,7 @@ namespace Projet_Sqli.Services
             new Tuple<string, string>("RU", "Russia"),
             new Tuple<string, string>("MA", "Morocco"),
             new Tuple<string, string>("NO", "Norway"),
-            new Tuple<string, string>("CN", "China"),
+            new Tuple<string, string>("SA", "Saoudia"),
             new Tuple<string, string>("JP", "Japan"),
             new Tuple<string, string>("IN", "India"),
             new Tuple<string, string>("CA", "Canada"),
@@ -41,15 +46,17 @@ namespace Projet_Sqli.Services
             new Tuple<string, string>("IT", "Italy"),
         };
 
-        public VideoServices(HttpClient httpClient, ApplicationDbContext dbContext)
+        public VideoServices(HttpClient httpClient, ApplicationDbContext dbContext, ILogger<VideoServices> logger)
         {
             _httpClient = httpClient;
             _apiKey = "AIzaSyDozD3fqe1Aof_tGmEpt8lyYVV_v7ENxuA";
             _dbContext = dbContext;
+            _logger = logger;
+
         }
 
 
-   
+
 
 
         public async Task<List<Videos>> GetTrendingVideosAsync(string regionCode)
@@ -61,6 +68,8 @@ namespace Projet_Sqli.Services
             }
 
             var requestUrl = $"https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&chart=mostPopular&maxResults=20&regionCode={regionCode}&key={_apiKey}";
+            _logger.LogInformation($"Request URL: {requestUrl}"); // Log the URL
+
 
             var response = await _httpClient.GetStringAsync(requestUrl);
             var jsonResponse = JObject.Parse(response);

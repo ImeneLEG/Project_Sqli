@@ -36,6 +36,10 @@ builder.Services.AddScoped<HistoriqueService>();
 //Ajouter le Service pour Favoris 
 builder.Services.AddScoped<FavorisService>();
 
+// Register the background service
+builder.Services.AddSingleton<VideoRetrievalService>();
+builder.Services.AddHostedService<VideoRetrievalService>(provider => provider.GetRequiredService<VideoRetrievalService>());
+
 
 //Ajout des controlleurs 
 
@@ -90,6 +94,12 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole(); // Log to the console
+    logging.AddDebug(); // Log to debug output
+});
 
 
 var app = builder.Build();
