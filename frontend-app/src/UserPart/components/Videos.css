@@ -1,0 +1,53 @@
+
+
+/* Videos.css (or your global styles) */
+
+/* Responsive layout for larger screens (e.g., 1920px and above) */
+@media (min-width: 1920px) {
+  .MuiStack-root {
+    gap: 20px; /* Increase the gap between videos */
+  }
+}
+
+
+
+/* .videos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  
+  .video-item {
+    flex: 0 0 calc(33.33% - 50px); 
+    max-width: calc(33.33% - 50px); 
+    margin-bottom: 50px; 
+  }
+  
+  
+  @media (max-width: 960px) {
+    .videos-container {
+      justify-content: flex-start;  
+      gap: 20px;  
+    }
+  
+    .video-item {
+      flex-basis: calc(50% - 20px);  
+      max-width: calc(50% - 20px);  
+    }
+  }
+  
+   
+  @media (max-width: 600px) {
+    .videos-container {
+      gap: 10px;  
+    }
+  
+    .video-item {
+      flex-basis: 100%;  
+      max-width: 100%;
+    }
+  }
+   */
