@@ -24,7 +24,7 @@ const Navbar = () => {
             visibility: { xs: 'hidden', md: 'visible' }, // Hide on xs, visible on md and larger
           }}
         >
-          uTube
+          TrendyTube
         </Typography>
       </Link>
       <SearchBar />
