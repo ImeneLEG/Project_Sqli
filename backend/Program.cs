@@ -87,3 +87,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+
+// validation de backend et port
