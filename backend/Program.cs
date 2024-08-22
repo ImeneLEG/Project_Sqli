@@ -1,19 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-
 using Projet_Sqli.Data;
 using Projet_Sqli.Services;
-
-using Microsoft.AspNetCore.Authentication.Cookies; // authentification cookies
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-
-
-
-// Configure HTTPS redirection
 builder.Services.AddHttpsRedirection(options =>
 {
     options.HttpsPort = 5001; // Set your preferred HTTPS port
@@ -28,36 +20,12 @@ builder.Services.AddHttpClient<VideoServices>();
 
 // Add other services
 builder.Services.AddScoped<UserService>();
-
-
-// Ajouter le service d'historique(imene part) 
-builder.Services.AddScoped<HistoriqueService>();
-
-//Ajouter le Service pour Favoris 
-builder.Services.AddScoped<FavorisService>();
+builder.Services.AddScoped<HistoriqueService>(); // Historical service
+builder.Services.AddScoped<FavorisService>(); // Favorite service
 
 // Register the background service
 builder.Services.AddSingleton<VideoRetrievalService>();
 builder.Services.AddHostedService<VideoRetrievalService>(provider => provider.GetRequiredService<VideoRetrievalService>());
-
-
-//Ajout des controlleurs 
-
-// Ajoutez cette ligne pour configurer HTTPS
-builder.Services.AddHttpsRedirection(options =>
-{
-    options.HttpsPort = 5001; // Ou le port que vous souhaitez utiliser pour HTTPS
-});
-
-// Ajouter la configuration du DbContext
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Ajouter le service UserService
-builder.Services.AddScoped<UserService>();
-
-builder.Services.AddControllers();
-
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -69,28 +37,26 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-
 // Configure Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/api/auth/login"; // Chemin pour rediriger les utilisateurs non authentifiés
-        options.LogoutPath = "/api/auth/logout"; // Chemin pour la déconnexion
-        options.Cookie.HttpOnly = true; // Protéger le cookie contre les attaques XSS
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Utiliser des cookies sécurisés (HTTPS)
-        options.Cookie.SameSite = SameSiteMode.Strict; // Protéger contre les attaques CSRF
+        options.LoginPath = "/api/auth/login"; // Path for redirecting unauthenticated users
+        options.LogoutPath = "/api/auth/logout"; // Path for logout
+        options.Cookie.HttpOnly = true; // Protect cookie against XSS
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Use secure cookies (HTTPS)
+        options.Cookie.SameSite = SameSiteMode.Strict; // Protect against CSRF attacks
     });
 
-
+// Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
-        builder =>
+        policy =>
         {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
+            policy.AllowAnyOrigin() // Allow all origins
+                  .AllowAnyMethod() // Allow all HTTP methods
+                  .AllowAnyHeader(); // Allow all headers
         });
 });
 
@@ -101,7 +67,6 @@ builder.Services.AddLogging(logging =>
     logging.AddDebug(); // Log to debug output
 });
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -111,8 +76,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Use CORS policy
+app.UseCors("AllowAllOrigins");
+
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); // Add this line to enable authentication
 app.UseAuthorization();
 
 app.MapControllers();
