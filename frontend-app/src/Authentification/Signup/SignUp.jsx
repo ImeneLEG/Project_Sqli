@@ -15,6 +15,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { signUp } from '../../services/authService';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Alert from '@mui/material/Alert';
 
 function Copyright(props) {
   return (
@@ -54,16 +59,46 @@ export default function SignUp() {
 
   const navigate = useNavigate();
 
+
+  const [showPassword, setShowPassword] = React.useState(false); // État pour gérer la visibilité du mot de passe
+  const [errorMessage, setErrorMessage] = React.useState(''); // State for handling error messages
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const validatePassword = (password) => {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasDigit = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar;
+};
+
+
+
   const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     
 
+    const password = data.get('password');
+
+    // Validate password
+    if (!validatePassword(password)) {
+        setErrorMessage('Password must contain at least one number, one special character, one lowercase letter, and one uppercase letter.');
+        return;
+    }
     // Créer l'objet à envoyer au backend
     const userData = {
       Username: data.get('firstName'),
       Email: data.get('email'),
-      Password: data.get('password'),
+      Password: password,
       Country: data.get('country'),
       Role: {
         Name: 'user', // Rôle par défaut
@@ -74,11 +109,18 @@ export default function SignUp() {
     // Envoyer les données au backend via axios
     try{
       const response = await signUp(userData);
-      console.log('Succès:', response.data);
-      navigate('/login');
+
+      if(response.status === 200){
+        console.log('Succès:', response.data);
+        navigate('/login');
+      }else{
+        setErrorMessage('Email already taken.'); // Set error message
+      }
+      
       
     }catch (error) {
       console.error('Error:', error);
+      setErrorMessage('Password must contain at least one number, one special character, one lowercase letter, and one uppercase letter. '); // Set error message
     }
     
       
@@ -104,11 +146,16 @@ export default function SignUp() {
           <img
             src="https://www.freepnglogos.com/uploads/youtube-logo-png/heart-youtube-icon-logo-vector-download-34.png"
             alt="YouTube Logo"
-            style={{ width: 50, height: 50, marginBottom: 8 }} // Ajuster la taille et la marge selon vos préférences
+            style={{ width: 30, height: 30, marginBottom: 8 }} // Ajuster la taille et la marge selon vos préférences
           />
           <Typography component="h1" variant="h5">
             Sign up to TrendyTube
           </Typography>
+          {errorMessage && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              {errorMessage}
+            </Alert>
+          )}
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -143,15 +190,28 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+              <TextField
                   required
                   fullWidth
                   name="password"
                   label="Password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'} // Utilisation de l'état pour définir le type
                   id="password"
                   autoComplete="new-password"
-                />
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }} />
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
