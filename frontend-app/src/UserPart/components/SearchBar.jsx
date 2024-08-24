@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Paper, IconButton, Button } from '@mui/material';
+import { Paper, IconButton } from '@mui/material';
 import { Search } from '@mui/icons-material';
 
 const SearchBar = () => {
@@ -20,13 +20,11 @@ const SearchBar = () => {
     }
   };
 
-
   const hideSuggestions = () => {
     setShowSuggestions(false);
   };
 
   useEffect(() => {
-    // Function to fetch suggestions using JSONP
     const fetchSuggestions = (requestTerm) => {
       const script = document.createElement('script');
       script.src = `https://suggestqueries.google.com/complete/search?callback=suggestCallBack&hl=en&ds=yt&jsonp=suggestCallBack&q=${encodeURIComponent(
@@ -35,7 +33,7 @@ const SearchBar = () => {
 
       window.suggestCallBack = (data) => {
         const suggestions = data[1].map((val) => ({ value: val[0] }));
-        setSuggestions(suggestions.slice(0, 7)); // Limit suggestions to 5 items
+        setSuggestions(suggestions.slice(0, 7));
       };
 
       document.body.appendChild(script);
@@ -43,10 +41,10 @@ const SearchBar = () => {
 
     if (inputValue !== '') {
       fetchSuggestions(inputValue);
-      setShowSuggestions(true); // Show suggestions when input is not empty
+      setShowSuggestions(true);
     } else {
       setSuggestions([]);
-      setShowSuggestions(false); // Hide suggestions when input is empty
+      setShowSuggestions(false);
     }
   }, [inputValue]);
 
@@ -57,114 +55,93 @@ const SearchBar = () => {
 
   const handleSelectSuggestion = (selectedSuggestion) => {
     setInputValue(selectedSuggestion.value);
-    setsearchTerm(selectedSuggestion.value); // Update searchTerm with the selected suggestion
+    setsearchTerm(selectedSuggestion.value);
     setShowSuggestions(false); 
-    
-    // Hide suggestions after clicking a suggestion
   };
-
 
   return (
     <Paper
       component='form'
       onSubmit={handleSubmit}
       sx={{
-        borderRadius: 20,
+        borderRadius: '20px',
         border: '1px solid #e3e3e3',
-        pl: 2,
-        boxShadow: 'none',
-        mr: { md: 5 },
-        maxWidth: { xs: '100%', sm: '300px', md: '500px' },
-        margin: '0 auto',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         display: 'flex',
-        alignItems: 'center', // Center the items vertically
-        justifyContent: 'space-between',
-         // Align the items horizontally
-         // Ensure the container expands to full width
+        alignItems: 'center',
+        maxWidth: { xs: '90%', sm: '300px', md: '500px' },
+        margin: '0 auto',
+        position: 'relative', // Added for suggestion list positioning
       }}
-    ><div style={{ position: 'relative',margintop:'100px', }}>
+    >
       <input
-        className='search-bar'
-        placeholder='Search..'
-        value={inputValue} // Use 'inputValue' instead of 'searchTerm'
+        placeholder='Search...'
+        value={inputValue}
         onChange={handleInputChange}
-        style={{ 
-         
-          fontSize: '20px'}} // Use the combined handler
-        sx={{
-          flex: '1',
-          
-           // Allow the input to fill the remaining space
-           fontSize: { xs: '14px', sm: '16px', md: '20px' },
-           fontWeight:'bold',
-           fontFamily: 'Arial',
-          border: 'none', // Remove the border to prevent misalignment on xs devices
-          outline: 'none', // Remove the outline on focus
-          backgroundColor: 'transparent', // Ensure the background is transparent
+        style={{
+          flex: 1,
+          border: 'none',
+          outline: 'none',
+          padding: '10px',
+          fontSize: '16px',
+          fontFamily: 'Arial, sans-serif',
+          borderRadius: '20px',
         }}
       />
-      
-      
-        {showSuggestions && (
-          <ul
-            className='suggestion-list'
-            style={{
-              listStyleType: 'none',
-              padding: 0,
-              marginTop: '20px',
-              marginRight:'140px',
-              position: 'absolute',
-              backgroundColor: '#fff',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)',
-              borderRadius: '4px',
-              zIndex: 1,
-              width: '100%',
-              color:'red',
-              fontWeight:'bold',
-              fontFamily: 'Arial',
-              
-            }}
-          >
-            {suggestions.map((suggestion, index) => (
-              <li type='submit'
-                key={index}
+      {showSuggestions && (
+        <ul
+          style={{
+            listStyleType: 'none',
+            padding: 0,
+            margin: '5px 0 0',
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            backgroundColor: '#fff',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            borderRadius: '8px',
+            zIndex: 10,
+          }}
+        >
+          {suggestions.map((suggestion, index) => (
+            <li
+              key={index}
+              onClick={() => handleSelectSuggestion(suggestion)}
+              style={{
+                padding: '10px',
+                cursor: 'pointer',
+                borderBottom: index === suggestions.length - 1 ? 'none' : '1px solid #e3e3e3',
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif',
+              }}
+            >
+              {suggestion.value}
+            </li>
+          ))}
+          {suggestions.length > 0 && (
+            <li style={{ textAlign: 'center' }}>
+              <button
+                onClick={hideSuggestions}
                 style={{
+                  backgroundColor: '#f00',
+                  color: '#fff',
+                  border: 'none',
                   padding: '10px',
+                  borderRadius: '4px',
                   cursor: 'pointer',
-                  borderBottom: index === suggestions.length - 1 ? 'none' : '1px solid #e3e3e3',
+                  fontSize: '14px',
+                  width: '100%',
                 }}
-                onClick={() => handleSelectSuggestion(suggestion)}
+                type='button'
               >
-                {suggestion.value}
-                
-              </li>
-              
-            ))}
-           <li style={{ textAlign: 'center',backgroundColor: '#f00',cursor: 'pointer',  }} onClick={hideSuggestions}>
-              <div>
-                <button
-                  onClick={hideSuggestions}
-                  style={{
-                    backgroundColor: '#f00',
-                    color: '#fff',
-                    padding: '10px',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    textAlign: 'center',
-                  }}
-                  type='button'
-                >
-                  Clear All
-                </button>
-              </div>
-              </li>
-          </ul>
-        )}
-      </div>
-
-
-      <IconButton type='submit' sx={{ p: '10px', color: 'red' }}>
+                Clear All
+              </button>
+            </li>
+          )}
+        </ul>
+      )}
+      <IconButton type='submit' sx={{ p: '10px', color: '#f00' }}>
         <Search />
       </IconButton>
     </Paper>

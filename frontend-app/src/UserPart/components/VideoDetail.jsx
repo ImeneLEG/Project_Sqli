@@ -1,89 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
-import { Typography, Box, Stack } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
-import { fetchFromAPI } from '../utils/fetchFromApi';
-import { Videos } from './index';
+import { getVideoById } from "../../services/videoService";
 
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 const VideoDetail = () => {
-  const { id } = useParams();
-  const [VideoDetail, setVideoDetail] = useState(null);
+    const [videoDetail, setVideoDetail] = useState(null);
+    const { videoId } = useParams();
+     console.log(videoId)
+    useEffect(() => {
+        getVideoById(videoId).then((data) => {
+            setVideoDetail(data);
+        }).catch(console.error);
+    }, [videoId]);
 
-  // const [likeCount, setLikeCount] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
- 
-  const handleLikeClick = () => {
-    // setLikeCount((prevCount) => prevCount + 1);
-    setIsLiked(true);
-  };
+    if (!videoDetail) return <p>Loading...</p>;
 
-const [videos, setvideos] = useState(null)
-  useEffect(() => {
-    fetchFromAPI(`videos?part=snippet,statistics&id=${id}`)
-      .then((data) => setVideoDetail(data.items[0])) // "data.items[0]" instead of "data.item[0]"
-      .catch((error) => console.error('Error fetching video details:', error));
+    // Function to get the most recent value from a dictionary
+    const getMostRecentValue = (data) => {
+        if (data) {
+            const sortedKeys = Object.keys(data).sort((a, b) => new Date(b) - new Date(a));
+            const mostRecentKey = sortedKeys[0];
+            return data[mostRecentKey];
+        }
+        return 0;
+    };
 
-    fetchFromAPI(`search?part=snippet&relatedToVideoId=${id}&type=video`)
-    .then((data)=>setvideos(data.items))
-  }, [id]);
+    const views = getMostRecentValue(videoDetail.views);
+    const likes = getMostRecentValue(videoDetail.likes);
+    const comments = getMostRecentValue(videoDetail.comments);
 
-  if (!VideoDetail) {
-    // Render a loading state or return null if the data is not available yet
-    return <div>Loading...</div>; // You can customize the loading state as needed
-  }
+    return (
+        <Box sx={{ backgroundColor: '#000', color: '#000', padding: '20px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box sx={{ width: '70%', borderRadius: '10px', marginBottom: '20px' }}>
+                <Box sx={{ position: 'relative', paddingBottom: '56.25%', borderRadius: '10px', marginBottom: '20px' }}>
+                    <ReactPlayer
+                        url={videoDetail.url}
+                        className="react-player"
+                        controls
+                        width="100%"
+                        height="100%"
+                        style={{ position: 'absolute', top: '0', left: '0', borderRadius: '10px' }}
+                    />
+                </Box>
 
-  const {
-    snippet: { title, channelId, channelTitle },
-    statistics: { viewCount, likeCount },
-  } = VideoDetail;
-
-  return (
-    <Box minHeight='95vh' >
-      <Stack direction={{ xs: 'column', md: 'row' }}>
-        <Box flex={1} zIndex={0} position="relative">
-          <Box sx={{ width: '100%', position: 'sticky', top: '76px' }}>
-            <ReactPlayer url={`https://www.youtube.com/watch?v=${id}`} className='react-player' controls />
-            <Typography color='#fff' variant='h5' fontWeight='bold' p={2}>
-              {title}
-            </Typography>
-            <Stack direction='row' justifyContent='space-between' sx={{ color: '#fff' }}  px={2}>
-              <Link to={`/channels/${channelId}`}>
-                <Typography variant={{ sm: 'subtitle1', md: 'h6' }} color='#fff'>
-                  {channelTitle}
-                  <CheckCircle sx={{ fontSize: '12px', color: 'gray', ml: '5px' }} />
+                <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center', marginBottom: '10px', color: 'white' }}>
+                    {videoDetail.title}
                 </Typography>
-              </Link>
-            
-            <Stack direction="row" gap="20px" alignItems="center">
-                <Typography variant="body1" sx={{ opacity: 0.7 }}>
-                  {parseInt(viewCount).toLocaleString()} views
+                <Typography variant="body1" sx={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', marginBottom: '20px', color: 'white' }}>
+                    {videoDetail.channelTitle}
+                    <CheckCircle sx={{ fontSize: '16px', color: '#ff6f61' }} />
                 </Typography>
-                <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center', opacity: 0.7 }}>
-                <ThumbUpIcon
-  color={isLiked ? 'primary' : 'inherit'}
-  style={{ marginRight: '4px', cursor: 'pointer' }}
-  onClick={handleLikeClick}
-/>
-  {parseInt(likeCount).toLocaleString()}
-</Typography>
 
-              </Stack></Stack>
-          </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                    <Box sx={{ textAlign: 'center', borderRadius: '10px', padding: '5px', backgroundColor: '#f1f5f9', color: '#000', width: '30%' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            {new Date(videoDetail.publishedAt).toLocaleDateString()}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#64748b' }}>Published at</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center', borderRadius: '10px', padding: '8px', backgroundColor: '#f1f5f9', color: '#000', width: '30%' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            {Math.floor(videoDetail.duration / 3600) > 0 && `${Math.floor(videoDetail.duration / 3600)}h `}{Math.floor((videoDetail.duration % 3600) / 60)}m {videoDetail.duration % 60}s
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#64748b' }}>Duration</Typography>
+                    </Box>
+                </Box>
+
+                <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+                    <Box sx={{ textAlign: 'center', borderRadius: '10px', padding: '10px', backgroundColor: '#f1f5f9', color: '#000', width: '30%' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            {views.toLocaleString()}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#64748b' }}>Views</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center', borderRadius: '10px', padding: '10px', backgroundColor: '#f1f5f9', color: '#000', width: '30%' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            {likes.toLocaleString()}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#64748b' }}>Likes</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center', borderRadius: '10px', padding: '10px', backgroundColor: '#f1f5f9', color: '#000', width: '30%' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                            {comments.toLocaleString()}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#64748b' }}>Comments</Typography>
+                    </Box>
+                </Box>
+            </Box>
         </Box>
-
-        <Box px={2} py={{ md: 1, xs: 5 }} justifyContent='center' alignItems='center'>
-        <Typography variant="h6" sx={{ color: 'yellow', textAlign: 'center' }}>
-        suggested videos
-      </Typography>
-      <Videos videos={videos} direction='column'/>
-    </Box>
-      </Stack>
-
-     
-    </Box>
-  );
+    );
 };
 
 export default VideoDetail;

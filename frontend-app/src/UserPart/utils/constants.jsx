@@ -8,7 +8,7 @@ export const logo='https://www.freepnglogos.com/uploads/youtube-logo-png/heart-y
 export const categories = [
 
   { name: 'My Historique', icon: <HistoryIcon />, },
-  { name: 'My Favorite videos', icon: <FavoriteIcon />, },
+  { name: 'Favorites', icon: <FavoriteIcon />, },
 
 ];
 
