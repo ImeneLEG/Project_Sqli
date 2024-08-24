@@ -113,7 +113,8 @@ namespace Projet_Sqli.Controllers
                 Message = "Connexion réussie.",
                 RoleMessage = $"Vous êtes {user.Role.Name}.",
                 Country = $"{user.Country}",
-                Email = $"{user.Email}"
+                Email = $"{user.Email}",
+                RoleName =$"{user.Role.Name}"
             });
         }
 

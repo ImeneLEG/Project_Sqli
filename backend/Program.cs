@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Projet_Sqli.Data;
 using Projet_Sqli.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Cookies; // authentication cookies
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configure HTTPS redirection
 builder.Services.AddHttpsRedirection(options =>
 {
     options.HttpsPort = 5001; // Set your preferred HTTPS port
@@ -27,6 +27,7 @@ builder.Services.AddScoped<FavorisService>();
 builder.Services.AddSingleton<VideoRetrievalService>();
 builder.Services.AddHostedService<VideoRetrievalService>(provider => provider.GetRequiredService<VideoRetrievalService>());
 
+// Add controllers and JSON configuration
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
@@ -54,6 +55,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                 return Task.CompletedTask;
             }
         };
+
     });
 
 // Configure CORS with specific origins
@@ -69,6 +71,7 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Add logging
 builder.Services.AddLogging(logging =>
 {
     logging.ClearProviders();
@@ -78,7 +81,7 @@ builder.Services.AddLogging(logging =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -31,7 +31,7 @@ namespace Projet_Sqli.Services
             new Tuple<string, string>("RU", "Russia"),
             new Tuple<string, string>("MA", "Morocco"),
             new Tuple<string, string>("NO", "Norway"),
-            new Tuple<string, string>("SA", "Saoudia"),
+            new Tuple<string, string>("SA", "Saudi Arabia"),
             new Tuple<string, string>("JP", "Japan"),
             new Tuple<string, string>("IN", "India"),
             new Tuple<string, string>("CA", "Canada"),
@@ -54,13 +54,9 @@ namespace Projet_Sqli.Services
             _logger = logger;
 
         }
-
-
-
-
-
         public async Task<List<Videos>> GetTrendingVideosAsync(string regionCode)
         {
+
             // Check if the region code is valid
             if (!countries.Any(c => c.Item1.Equals(regionCode, StringComparison.OrdinalIgnoreCase)))
             {
@@ -85,6 +81,7 @@ namespace Projet_Sqli.Services
                     if (item != null)
                     {
                         var videoId = item["id"]?.ToString() ?? string.Empty;
+                       
 
                         // Check if the video already exists in the database
                         var existingVideo = await _dbContext.Videos
@@ -94,6 +91,7 @@ namespace Projet_Sqli.Services
                         {
                             var video = new Videos
                             {
+                                
                                 VideoId = videoId,
                                 Title = item["snippet"]?["title"]?.ToString() ?? string.Empty,
                                 Description = item["snippet"]?["description"]?.ToString() ?? string.Empty,
@@ -199,6 +197,8 @@ namespace Projet_Sqli.Services
             return await _dbContext.Videos
                                    .FirstOrDefaultAsync(v => v.VideoId == videoId);
         }
+
+
 
         public List<Tuple<string, string>> GetRegions()
         {
