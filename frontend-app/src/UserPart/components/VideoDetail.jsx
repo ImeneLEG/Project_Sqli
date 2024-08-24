@@ -8,7 +8,7 @@ import { getVideoById } from "../../services/videoService";
 const VideoDetail = () => {
     const [videoDetail, setVideoDetail] = useState(null);
     const { videoId } = useParams();
-
+console.log(videoId)
     useEffect(() => {
         getVideoById(videoId).then((data) => {
             setVideoDetail(data);
