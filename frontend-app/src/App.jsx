@@ -24,6 +24,7 @@ const AppWrapper = () => {
             <Route path='/' exact element={<Feed />} />
             <Route path='/video/:id' exact element={<VideoDetail />} />
             <Route path='/search/:searchTerm' exact element={<SearchFeed />} />
+            <Route path='/user' exact element={<Feed />} /> 
             
           </Routes>
         </Box>
