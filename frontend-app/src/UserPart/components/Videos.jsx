@@ -1,41 +1,37 @@
-import { Box, Stack } from '@mui/material';
-import { VideoCard} from './index';
-import React from 'react';
+import { Box, Stack } from "@mui/material";
+import React from "react";
+import VideoCard from "./VideoCard";
 
-
-const Videos = ({ videos, sidebarOpen ,direction}) => {
-    // Handle the case when videos array is null or empty
+const Videos = ({ videos, sidebarOpen, direction }) => {
     if (!videos || videos.length === 0) {
-      return null; // or you can render a loading message or an empty state component
+        return <p>No videos available</p>;
     }
-  return (
-    <Stack
-      direction={direction ||"row"}
-      flexWrap="wrap"
-      justifyContent="center"
-      alignItems="center"
-      sx={{
-        ".MuiBox-root": {
-          // Apply styles to the Box component (videos container) based on breakpoints
-          marginLeft: {
-            xs: '0', // No marginLeft for xs devices
-            md: sidebarOpen ? '20px' : '10px', // Apply marginLeft for md and larger devices when the sidebar is open/closed
-          },
-          marginTop: {
-            xs: '10px', // No marginTop for xs devices
-            md: '10px', // Apply marginTop for md and larger devices 
-          },
-        },
-      }}
-    >
-      {videos.map((item, idx) => (
-        <Box key={idx}>
-          {item.id.videoId &&  <VideoCard video={item} sidebarOpen={sidebarOpen} />}
-
-        </Box>
-      ))}
-    </Stack>
-  );
+    return (
+        <Stack
+            direction={direction || "row"}
+            flexWrap="wrap"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+                ".MuiBox-root": {
+                    marginLeft: {
+                        xs: "0",
+                        md: sidebarOpen ? "20px" : "10px",
+                    },
+                    marginTop: {
+                        xs: "10px",
+                        md: "10px",
+                    },
+                },
+            }}
+        >
+            {videos.map((item, idx) => (
+                <Box key={idx}>
+                    {item.videoId && <VideoCard video={item} sidebarOpen={sidebarOpen} />}
+                </Box>
+            ))}
+        </Stack>
+    );
 };
 
 export default Videos;

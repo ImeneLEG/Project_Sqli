@@ -24,9 +24,7 @@
     "eject": "react-scripts eject",
     "dev": "vite",
     "serve": "vite preview"
-
   },
-
   "eslintConfig": {
     "extends": [
       "react-app",

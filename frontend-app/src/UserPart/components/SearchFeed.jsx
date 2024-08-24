@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { SideBar, Videos } from "./index";
-import { fetchFromAPI } from "../utils/fetchFromApi";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useParams, useNavigate } from "react-router-dom";
+import { getTrendingVideos } from "../../services/videoService"; // Assurez-vous d'avoir la bonne méthode pour récupérer les vidéos basées sur le terme de recherche
+
+
+
 
 const SearchFeed = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -20,17 +23,6 @@ const SearchFeed = () => {
     setShowSuggestions(!showSuggestions);
   };
 
-  useEffect(() => {
-    // Fetch videos based on the selected category only if a searchTerm exists.
-    if (searchTerm && selectedCategory !== searchTerm) {
-      fetchFromAPI(`search?part=snippet&q=${selectedCategory}`)
-        .then((data) => setCategoryVideos(data.items))
-        .catch((error) => console.error("Error fetching category videos:", error));
-    } else {
-      // Reset the searchVideos state when a sidebar category is clicked
-      setSearchVideos([]);
-    }
-  }, [searchTerm, selectedCategory]);
 
   // Function to toggle the sidebar state
   const toggleSidebar = () => {
@@ -43,18 +35,22 @@ const SearchFeed = () => {
     navigate(`/search/${category}`);
   };
 
-  useEffect(() => {
-    // Fetch search results when the searchTerm changes
-    if (searchTerm) {
-      fetchFromAPI(`search?part=snippet&q=${searchTerm}`)
-        .then((data) => {
-          setSearchVideos(data.items);
-        })
-        .catch((error) => console.error("Error fetching search results:", error));
-    }
-  }, [searchTerm]);
 
-  return (
+
+// Nouvelle méthode pour récupérer des vidéos en utilisant votre backend
+
+
+    useEffect(() => {
+        if (searchTerm) {
+            getTrendingVideos(searchTerm)
+                .then((data) => setSearchVideos(data)) // Assurez-vous que les données reçues sont sous la forme attendue par votre composant
+                .catch((error) => console.error("Error fetching search videos:", error));
+        }
+    }, [searchTerm]);
+
+
+
+    return (
     <Stack sx={{ flexDirection: { sx: "column", md: "row" } }}>
       <Box sx={{ position: "fixed", left: 16, top: 10, zIndex: 999 }}>
         <button

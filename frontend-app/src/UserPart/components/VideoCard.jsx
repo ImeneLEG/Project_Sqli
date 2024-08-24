@@ -1,43 +1,41 @@
-import { Card, CardContent, CardMedia, Typography } from '@mui/material';
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { demoChannelTitle,demoVideoTitle, demoVideoUrl,demoProfilePicture} from '../utils/constants';
-import { CheckCircle } from '@mui/icons-material';
+import React from "react";
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
+import { CheckCircle } from "@mui/icons-material";
 
-const VideoCard = ({ video: { id: { videoId }, snippet }, sidebarOpen ,channelDetail}) => {
-  const videoWidth = sidebarOpen ? '400px' : '360px'; // Adjust the video width when the sidebar is open
+    const VideoCard = ({ video, sidebarOpen }) => {
+    const videoWidth = sidebarOpen ? "400px" : "360px";
+    const highQualityThumbnail = video.thumbnail.replace("default", "hqdefault");
 
-  return (
-    <Card sx={{ width: { md: videoWidth, xs: '360px' }, borderRadius: '15px' }}>
-      {/* Adjust the video width based on the sidebarOpen prop */}
-      <Link to={videoId ? `/video/${videoId}` : demoVideoUrl}>
-      
-<CardMedia
-  image={snippet?.thumbnails?.high?.url}
-  alt={snippet?.title}
-  sx={{
-    width: videoWidth,
-    height: '190px',
-    transition: 'width 0.3s ease, height 0.3s ease', // Add a transition for smoother resizing
-  }}
-/>
-      </Link>
-      <CardContent sx={{ backgroundColor: 'white', height: '80px' }}>
-        <Link to={videoId ? `/video/${videoId}` : demoVideoUrl}>
-          <Typography variant="subtitle1" fontWeight="bold">
-            {snippet?.title.slice(0, 80) || demoVideoTitle.slice(0, 60)}
-          </Typography>
-        </Link>
-        <Link>
 
-          <Typography variant="subtitle2" color="#5F5F57">
-            {snippet?.channelTitle || demoChannelTitle}
-            <CheckCircle sx={{ fontSize: '15px', marginLeft: '5px', marginBottom: '-3px' }} />
-          </Typography>
-        </Link>
-      </CardContent>
-    </Card>
-  );
+    return (
+        <Card sx={{ width: { md: videoWidth, xs: "360px" }, borderRadius: "15px" }}>
+            {video.videoId && (
+                <Link to={`/video/${video.videoId}`}>
+                    <CardMedia
+                        image={highQualityThumbnail}
+                        alt={video.title}
+                        sx={{ width: videoWidth, height: "190px", transition: "width 0.3s ease, height 0.3s ease" }}
+                    />
+                </Link>
+            )}
+            <CardContent sx={{ backgroundColor: "white", height: "80px" }}>
+                {video.title && (
+                    <Link to={`/video/${video.videoId}`}>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                            {video.title}
+                        </Typography>
+                    </Link>
+                )}
+                {video.channelTitle && (
+                    <Typography variant="subtitle2" color="#5F5F57">
+                        {video.channelTitle}
+                        <CheckCircle sx={{ fontSize: "15px", marginLeft: "5px", marginBottom: "-3px" }} />
+                    </Typography>
+                )}
+            </CardContent>
+        </Card>
+    );
 };
 
 export default VideoCard;
