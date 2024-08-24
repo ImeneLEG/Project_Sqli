@@ -1,22 +1,49 @@
 import React from 'react'
-import { BrowserRouter,Routes,Route } from 'react-router-dom'
+import { BrowserRouter,Routes,Route , useLocation  } from 'react-router-dom'
 import {Box} from '@mui/material'
 
 import {Navbar,Feed,SearchFeed,VideoDetail} from './UserPart/components';
-const App = () => {
+import Login from './Authentification/Login/Login';
+import SignUp from './Authentification/SignUp/SignUp';
+import Admin from './AdminPart/Admin';
+import LandingPage from './LandingPage/LandingPage';
+
+
+const AppWrapper = () => {
+  const location = useLocation();
+
+  // Check if the current path is login or signUp
+  const shouldShowLayout = location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/admin' && location.pathname !== '/welcome';
+
   return (
-    <BrowserRouter>
-    <Box sx={{backgroundColor:'#000'}}>
-    <Navbar/>
-    <Routes>
-    <Route path='/' exact element={<Feed/>}/>
-    <Route path='/video/:videoId' exact element={<VideoDetail/>}/>
-    <Route path='/search/:searchTerm' exact element={<SearchFeed/>}/>
+    <>
+      {shouldShowLayout ? (
+        <Box sx={{ backgroundColor: '#000' }}>
+          <Navbar />
+          <Routes>
+            <Route path='/' exact element={<Feed />} />
+            <Route path='/video/:videoId' exact element={<VideoDetail />} />
+            <Route path='/search/:searchTerm' exact element={<SearchFeed />} />
+            <Route path='/user' exact element={<Feed />} />
 
-    </Routes>
-    </Box>
-    </BrowserRouter>
-  )
-}
+          </Routes>
+        </Box>
+      ) : (
+        <Routes>
+          <Route path='/login' exact element={<Login />} />
+          <Route path='/signup' exact element={<SignUp />} />
+          <Route path='/admin' exact element={<Admin />} />
+          <Route path='/welcome' exact element={<LandingPage />}/>
+        </Routes>
+      )}
+    </>
+  );
+};
 
-export default App
+const App = () => (
+  <BrowserRouter>
+    <AppWrapper />
+  </BrowserRouter>
+);
+
+export default App;

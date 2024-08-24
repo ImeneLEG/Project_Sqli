@@ -3,7 +3,7 @@ import React from 'react';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import HistoryIcon from '@mui/icons-material/History';
 
-export const logos = 'https://i.ibb.co/s9Qys2j/logo.png';
+
 export const logo='https://www.freepnglogos.com/uploads/youtube-logo-png/heart-youtube-icon-logo-vector-download-34.png'
 export const categories = [
 

@@ -57,7 +57,21 @@ const SearchFeed = () => {
     }
   }, [selectedCategory, searchTerm]);
 
-  return (
+
+// Nouvelle méthode pour récupérer des vidéos en utilisant votre backend
+
+
+    useEffect(() => {
+        if (searchTerm) {
+            getTrendingVideos(searchTerm)
+                .then((data) => setSearchVideos(data)) // Assurez-vous que les données reçues sont sous la forme attendue par votre composant
+                .catch((error) => console.error("Error fetching search videos:", error));
+        }
+    }, [searchTerm]);
+
+
+
+    return (
     <Stack sx={{ flexDirection: { sx: "column", md: "row" } }}>
       <Box sx={{ position: "fixed", left: 16, top: 10, zIndex: 999 }}>
         {selectedCategory === 'Favorites' && (
