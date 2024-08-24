@@ -78,11 +78,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Use CORS policy
+app.UseCors("AllowAllOrigins");
+
 app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin"); // Apply CORS policy
 
+app.UseAuthentication(); // Add this line to enable authentication
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
+
+// validation de backend et port

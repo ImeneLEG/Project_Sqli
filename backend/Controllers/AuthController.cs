@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 using Projet_Sqli.Entities;
 using Projet_Sqli.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Projet_Sqli.Controllers
 {
@@ -88,12 +89,13 @@ namespace Projet_Sqli.Controllers
                 return BadRequest("Email ou mot de passe incorrect.");
             }
 
-            // Créer les claims pour l'utilisateur, y compris le pays
-                    var claims = new List<Claim>
+            // Create claims for the user, including the userId
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role.Name),
-                new Claim("Country", user.Country) // Ajouter le pays aux claims
+                new Claim("Country", user.Country),
+                new Claim("userId", user.Id.ToString()) // Add userId as a claim
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -102,12 +104,20 @@ namespace Projet_Sqli.Controllers
                 IsPersistent = true
             };
 
-            // Authentifier l'utilisateur
+            // Authenticate the user
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            return Ok(new { Message = "Connexion réussie.", RoleMessage = $"Vous êtes {user.Role.Name}.", Country = $"{user.Country}" , Email = $"{user.Email}" });
+            return Ok(new
+            {
+                Message = "Connexion réussie.",
+                RoleMessage = $"Vous êtes {user.Role.Name}.",
+                Country = $"{user.Country}",
+                Email = $"{user.Email}",
+                RoleName =$"{user.Role.Name}"
+            });
         }
+
 
 
 
@@ -160,6 +170,33 @@ namespace Projet_Sqli.Controllers
 
 
         // utuilisation : 'https://localhost:7275/api/Auth/getCountryID?id=1' \
+
+
+        //curent user connected 
+        [HttpGet("current-user")]
+        [Authorize]
+        public IActionResult GetCurrentUser()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
+            var usernameClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            var countryClaim = User.Claims.FirstOrDefault(c => c.Type == "Country");
+
+            if (userIdClaim != null && usernameClaim != null && roleClaim != null && countryClaim != null)
+            {
+                return Ok(new
+                {
+                    UserId = userIdClaim.Value,
+                    Username = usernameClaim.Value,
+                    Role = roleClaim.Value,
+                    Country = countryClaim.Value
+                });
+            }
+
+            return Unauthorized();
+        }
+
+
 
 
     }
