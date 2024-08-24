@@ -200,5 +200,10 @@ namespace Projet_Sqli.Services
                                    .FirstOrDefaultAsync(v => v.VideoId == videoId);
         }
 
+        public List<Tuple<string, string>> GetRegions()
+        {
+            return countries;
+        }
+
     }
 }

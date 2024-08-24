@@ -97,6 +97,14 @@ namespace Projet_Sqli.Controllers
             }
         }
 
-    
+        //recuperation des region pour les selectionner en front
+        [HttpGet("regions")]
+        public IActionResult GetRegions()
+        {
+            var regions = _videoServices.GetRegions();
+            return Ok(regions);
+        }
+
+
     }
 }

@@ -20,8 +20,8 @@ builder.Services.AddHttpClient<VideoServices>();
 
 // Add other services
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<HistoriqueService>(); // Historical service
-builder.Services.AddScoped<FavorisService>(); // Favorite service
+builder.Services.AddScoped<HistoriqueService>();
+builder.Services.AddScoped<FavorisService>();
 
 // Register the background service
 builder.Services.AddSingleton<VideoRetrievalService>();
@@ -33,7 +33,7 @@ builder.Services.AddControllers()
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -41,30 +41,39 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/api/auth/login"; // Path for redirecting unauthenticated users
-        options.LogoutPath = "/api/auth/logout"; // Path for logout
-        options.Cookie.HttpOnly = true; // Protect cookie against XSS
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Use secure cookies (HTTPS)
-        options.Cookie.SameSite = SameSiteMode.Strict; // Protect against CSRF attacks
+        options.LoginPath = "/api/auth/login";
+        options.LogoutPath = "/api/auth/logout";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Events = new CookieAuthenticationEvents
+        {
+            OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = 401;
+                return Task.CompletedTask;
+            }
+        };
     });
 
-// Configure CORS
+// Configure CORS with specific origins
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
+    options.AddPolicy("AllowSpecificOrigins",
         policy =>
         {
-            policy.AllowAnyOrigin() // Allow all origins
-                  .AllowAnyMethod() // Allow all HTTP methods
-                  .AllowAnyHeader(); // Allow all headers
+            policy.WithOrigins("http://localhost:5173") // Front-end URL
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
         });
 });
 
 builder.Services.AddLogging(logging =>
 {
     logging.ClearProviders();
-    logging.AddConsole(); // Log to the console
-    logging.AddDebug(); // Log to debug output
+    logging.AddConsole();
+    logging.AddDebug();
 });
 
 var app = builder.Build();
@@ -76,12 +85,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Use CORS policy
-app.UseCors("AllowAllOrigins");
+// Use the specific CORS policy
+app.UseCors("AllowSpecificOrigins");
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); // Add this line to enable authentication
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
