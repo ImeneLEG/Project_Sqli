@@ -10,11 +10,13 @@ namespace Projet_Sqli.Controllers
     {
         private readonly VideoServices _videoServices;
         private readonly HistoriqueService _historiqueService;
+        private readonly VideoRetrievalService _videoRetrievalService;
 
-        public VideosController(VideoServices videoService, HistoriqueService historiqueService)
+        public VideosController(VideoServices videoService, HistoriqueService historiqueService, VideoRetrievalService videoRetrievalService)
         {
             _videoServices = videoService;
             _historiqueService = historiqueService;
+            _videoRetrievalService = videoRetrievalService;
         }
 
 
@@ -67,6 +69,28 @@ namespace Projet_Sqli.Controllers
             }
         }
 
+        [HttpGet("{videoId}")]
+        public async Task<IActionResult> GetVideoById(string videoId)
+        {
+            var video = await _videoServices.GetVideoByIdAsync(videoId);
+
+            if (video == null)
+            {
+                return NotFound(new { Message = "Video not found." });
+            }
+
+            return Ok(video);
+        }
+        //recuperation des region pour les selectionner en front
+        [HttpGet("regions")]
+        public IActionResult GetRegions()
+        {
+            var regions = _videoServices.GetRegions();
+            return Ok(regions);
+        }
+
+
+
         // Action pour utliser le service du chargement des viéos les plus regardées par pays
         [HttpGet("most-viewed-by-country")]
         public async Task<IActionResult> GetMostViewedVideosByCountry()
@@ -81,5 +105,7 @@ namespace Projet_Sqli.Controllers
                 return StatusCode(500, "Une erreur s'est produite lors de la récupération des vidéos les plus regardées par pays.");
             }
         }
+
+    
     }
 }

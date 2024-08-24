@@ -12,8 +12,8 @@ using Projet_Sqli.Data;
 namespace Projet_Sqli.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240813090943_AddJsonFieldsToVideos")]
-    partial class AddJsonFieldsToVideos
+    [Migration("20240817230419_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,36 @@ namespace Projet_Sqli.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Projet_Sqli.Entities.Favoris", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSDATETIME()");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VideoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Favoris");
+                });
 
             modelBuilder.Entity("Projet_Sqli.Entities.Historique", b =>
                 {
@@ -85,16 +115,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8931),
+                            CreatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(8888),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8990)
+                            UpdatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9027)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8994),
+                            CreatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9031),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 13, 10, 9, 42, 842, DateTimeKind.Local).AddTicks(8996)
+                            UpdatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9033)
                         });
                 });
 
@@ -157,7 +187,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Comments")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("json");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -176,7 +206,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Likes")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("json");
 
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime2");
@@ -195,7 +225,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("TrendingRanks")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("json");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
