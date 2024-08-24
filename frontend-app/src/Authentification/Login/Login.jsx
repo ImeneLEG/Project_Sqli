@@ -80,7 +80,7 @@ export default function Login() {
       if (response.status === 200) {
         const userRole = response.data.roleName;
         if (userRole === 'user') {
-          navigate('/user');
+          navigate('/trendingVideos');
         } else if (userRole === 'admin') {
           navigate('/admin');
         }
@@ -162,7 +162,7 @@ export default function Login() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              Sign In
             </Button>
             <Grid container>
               <Grid item xs>
