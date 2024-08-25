@@ -13,6 +13,7 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from './ToggleColorMode';
 import Image from '../../../assets/logo.png';
+import logo from '../../UserPart/components/logo.svg'
 import { useNavigate } from 'react-router-dom';
 
 

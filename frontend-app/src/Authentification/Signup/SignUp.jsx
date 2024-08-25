@@ -20,6 +20,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Alert from '@mui/material/Alert';
+import logo from '../../UserPart/components/logo.svg'
 
 function Copyright(props) {
   return (
@@ -144,7 +145,7 @@ export default function SignUp() {
           }}
         >
           <img
-            src="https://www.freepnglogos.com/uploads/youtube-logo-png/heart-youtube-icon-logo-vector-download-34.png"
+            src={logo}
             alt="YouTube Logo"
             style={{ width: 30, height: 30, marginBottom: 8 }} // Ajuster la taille et la marge selon vos préférences
           />

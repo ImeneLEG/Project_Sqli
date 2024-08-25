@@ -13,7 +13,7 @@ const AppWrapper = () => {
   const location = useLocation();
 
   // Check if the current path is login or signUp
-  const shouldShowLayout = location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/admin' && location.pathname !== '/welcome';
+  const shouldShowLayout = location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/admin' && location.pathname !== '/welcome' && location.pathname !== '/login';
 
   return (
     <>
@@ -31,6 +31,7 @@ const AppWrapper = () => {
       ) : (
         <Routes>
           <Route path='/' exact element={<Login />} />
+          <Route path='/login' exact element={<Login />} />
           <Route path='/signup' exact element={<SignUp />} />
           <Route path='/admin' exact element={<Admin />} />
           <Route path='/welcome' exact element={<LandingPage />}/>
