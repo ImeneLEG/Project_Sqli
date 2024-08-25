@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import { useNavigate } from 'react-router-dom';
 
 
 import logo from '../../../assets/logo.png'
@@ -31,6 +32,8 @@ function Copyright() {
 }
 
 export default function Footer() {
+
+  const navigate = useNavigate();
   return (
     <Container
       sx={{
@@ -65,7 +68,7 @@ export default function Footer() {
                     logo
                 }
                 style={logoStyle}
-                alt="logo of sitemark"
+                alt="logo of App"
               />
             </Box>
             <Typography variant="body2" fontWeight={600} gutterBottom>
@@ -88,7 +91,7 @@ export default function Footer() {
                   'aria-label': 'Enter your email address',
                 }}
               />
-              <Button variant="contained" color="primary" sx={{ flexShrink: 0 }}>
+              <Button variant="contained" color="primary" sx={{ flexShrink: 0 }} onClick={()=>navigate('/')}>
                 Subscribe
               </Button>
             </Stack>
@@ -107,15 +110,7 @@ export default function Footer() {
           <Link color="text.secondary" href="#">
             Features
           </Link>
-          <Link color="text.secondary" href="#">
-            Testimonials
-          </Link>
-          <Link color="text.secondary" href="#">
-            Highlights
-          </Link>
-          <Link color="text.secondary" href="#">
-            Pricing
-          </Link>
+          
           <Link color="text.secondary" href="#">
             FAQs
           </Link>
@@ -134,10 +129,7 @@ export default function Footer() {
             About us
           </Link>
           <Link color="text.secondary" href="#">
-            Careers
-          </Link>
-          <Link color="text.secondary" href="#">
-            Press
+            Contact Us
           </Link>
         </Box>
         <Box
@@ -147,18 +139,7 @@ export default function Footer() {
             gap: 1,
           }}
         >
-          <Typography variant="body2" fontWeight={600}>
-            Legal
-          </Typography>
-          <Link color="text.secondary" href="#">
-            Terms
-          </Link>
-          <Link color="text.secondary" href="#">
-            Privacy
-          </Link>
-          <Link color="text.secondary" href="#">
-            Contact
-          </Link>
+          
         </Box>
       </Box>
       <Box
