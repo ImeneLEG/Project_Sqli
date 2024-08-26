@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\ProjetSQLI\\SQLI2\\Project_Sqli\\backend\\Projet_Sqli.csproj": {}
+    "C:\\Users\\HP\\Source\\Repos\\Project_Sqli\\backend\\Projet_Sqli.csproj": {}
   },
   "projects": {
-    "C:\\ProjetSQLI\\SQLI2\\Project_Sqli\\backend\\Projet_Sqli.csproj": {
+    "C:\\Users\\HP\\Source\\Repos\\Project_Sqli\\backend\\Projet_Sqli.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\ProjetSQLI\\SQLI2\\Project_Sqli\\backend\\Projet_Sqli.csproj",
+        "projectUniqueName": "C:\\Users\\HP\\Source\\Repos\\Project_Sqli\\backend\\Projet_Sqli.csproj",
         "projectName": "Projet_Sqli",
-        "projectPath": "C:\\ProjetSQLI\\SQLI2\\Project_Sqli\\backend\\Projet_Sqli.csproj",
-        "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\ProjetSQLI\\SQLI2\\Project_Sqli\\backend\\obj\\",
+        "projectPath": "C:\\Users\\HP\\Source\\Repos\\Project_Sqli\\backend\\Projet_Sqli.csproj",
+        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\HP\\Source\\Repos\\Project_Sqli\\backend\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\DELL\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -104,7 +100,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
