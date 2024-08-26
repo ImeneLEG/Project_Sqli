@@ -118,7 +118,7 @@ export const getCurrentUser = async () => {
     console.log(response.data); // Log the response data
     return response.data;
   } catch (error) {
-    console.error('Error fetching current user:', error.response ? error.response.data : error.message);
+    console.error('Error fetching current user:');
     throw error;
   }
 };

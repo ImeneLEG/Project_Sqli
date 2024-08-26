@@ -7,7 +7,7 @@ export default defineConfig({
     server: {
       proxy: {
         '/api': {
-          target: 'https://localhost:7276', // le port que vous avez dans swagger lorsque vous fetes try out
+          target: 'https://localhost:7275', // le port que vous avez dans swagger lorsque vous fetes try out
           changeOrigin: true,
           secure: false,
         },
