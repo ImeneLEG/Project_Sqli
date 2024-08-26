@@ -11,7 +11,7 @@ const Feed = () => {
     const [regions, setRegions] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRegion, setSelectedRegion] = useState("");
-    const [selectedRegionName, setSelectedRegionName] = useState(""); // Nouvel état pour le nom du pays
+    const [selectedRegionName, setSelectedRegionName] = useState(""); 
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
@@ -31,17 +31,26 @@ const Feed = () => {
             getUserFavoriteVideos(userId)
                 .then((data) => {
                     if (data && Array.isArray(data)) {
-                        // Set isFavorite to true for all videos in favorites
                         const favoriteVideos = data.map(video => ({
                             ...video,
                             isFavorite: true,
                         }));
                         setVideos(favoriteVideos);
+                    } else if (data.length === 0) {
+                        console.log("No favorite videos found.");
+                        setVideos([]); // Set an empty array if there are no favorites
                     } else {
                         console.error("Unexpected data format:", data);
                     }
                 })
-                .catch(console.error);
+                .catch((error) => {
+                    if (error.response && error.response.status === 404) {
+                        console.log("User has no favorite videos.");
+                        setVideos([]); // No favorites, so set an empty array
+                    } else {
+                        console.error("Error fetching favorite videos:", error);
+                    }
+                });
         } else if (selectedRegion) {
             getTrendingVideos(selectedRegion)
                 .then((data) => {
@@ -61,13 +70,10 @@ const Feed = () => {
 
     const handleRegionSelect = (regionCode) => {
         setSelectedRegion(regionCode);
-
-        // Trouver et définir le nom complet du pays en fonction du code de région
         const selectedRegionObject = regions.find(region => region.item1 === regionCode);
         if (selectedRegionObject) {
-            setSelectedRegionName(selectedRegionObject.item2); // Mettre à jour le nom du pays
+            setSelectedRegionName(selectedRegionObject.item2);
         }
-
         setSelectedCategory("New");
         setAnchorEl(null);
     };
@@ -85,7 +91,6 @@ const Feed = () => {
         if (!userId) return;
         try {
             await removeFromFavorites(userId, videoId);
-            // Remove the video from the local state immediately
             setVideos((prevVideos) => prevVideos.filter(video => video.videoId !== videoId));
         } catch (error) {
             console.error("Error removing video from favorites:", error);
@@ -119,7 +124,7 @@ const Feed = () => {
                 >
                     <SideBar
                         selectedCategory={selectedCategory}
-                        setSelectedCategory={setSelectedCategory} // Correct prop name
+                        setSelectedCategory={setSelectedCategory}
                     />
                     <Typography
                         variant="body2"
@@ -141,7 +146,6 @@ const Feed = () => {
                         )}
                     </Typography>
 
-                    {/* Conditionally render the Select Region button */}
                     {selectedCategory !== "Favorites" && (
                         <Box>
                             <Button
@@ -177,12 +181,19 @@ const Feed = () => {
                         </Box>
                     )}
                 </Stack>
-                <Videos
-                    videos={videos}
-                    sidebarOpen={sidebarOpen}
-                    onAddToFavorites={handleAddToFavorites}
-                    onRemoveFromFavorites={handleRemoveFromFavorites}
-                />
+
+                {videos.length > 0 ? (
+                    <Videos
+                        videos={videos}
+                        sidebarOpen={sidebarOpen}
+                        onAddToFavorites={handleAddToFavorites}
+                        onRemoveFromFavorites={handleRemoveFromFavorites}
+                    />
+                ) : (
+                    <Typography variant="h5" color="white">
+                        {selectedCategory === "Favorites" ? "You have no favorite videos." : "No videos available."}
+                    </Typography>
+                )}
             </Box>
         </Stack>
     );
