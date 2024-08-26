@@ -195,9 +195,5 @@ namespace Projet_Sqli.Controllers
 
             return Unauthorized();
         }
-
-
-
-
-    }
+       }
 }

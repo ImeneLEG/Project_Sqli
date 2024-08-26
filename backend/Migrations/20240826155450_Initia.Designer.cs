@@ -12,8 +12,8 @@ using Projet_Sqli.Data;
 namespace Projet_Sqli.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240817230419_initialCreate")]
-    partial class initialCreate
+    [Migration("20240826155450_Initia")]
+    partial class Initia
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -115,16 +115,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(8888),
+                            CreatedAt = new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2799),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9027)
+                            UpdatedAt = new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2919)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9031),
+                            CreatedAt = new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2921),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9033)
+                            UpdatedAt = new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2923)
                         });
                 });
 
