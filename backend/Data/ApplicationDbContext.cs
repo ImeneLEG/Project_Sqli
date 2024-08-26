@@ -49,26 +49,26 @@ namespace Projet_Sqli.Data
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                         v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
-                    .HasColumnType("json");
+                    .HasColumnType("nvarchar(max)");
 
 
                 entity.Property(e => e.Likes)
                    .HasConversion(
                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                        v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
-                   .HasColumnType("json");
+                   .HasColumnType("nvarchar(max)");
 
                 entity.Property(e => e.Comments)
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                         v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
-                    .HasColumnType("json");
+                    .HasColumnType("nvarchar(max)");
 
                 entity.Property(e => e.TrendingRanks)
                 .HasConversion(
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                     v => JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, int>>>(v, (JsonSerializerOptions)null))
-                .HasColumnType("json");
+                .HasColumnType("nvarchar(max)");
 
             });
 
