@@ -205,6 +205,5 @@ namespace Projet_Sqli.Services
             return countries;
         }
 
-
     }
 }
