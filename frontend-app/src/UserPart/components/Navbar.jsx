@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import logo from './logo.svg';
 import SearchBar from './SearchBar';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import {logout} from '../../services/authService'
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -16,11 +18,29 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    // Implement your logout logic here
-    console.log('Logged out');
-    handleMenuClose();
+  const handleLogout = async () => {
+    const navigate = useNavigate();
+    try {
+      // Call the logout function from authService
+      const response = await logout();
+
+      if (response.status === 200) {
+        console.log('Successfully logged out');
+        // Clear local storage or cookies here if needed
+        localStorage.removeItem('user'); // Example, replace with your logic
+        localStorage.removeItem('token'); // Example, replace with your logic
+        // Redirect to login page
+        navigate('/login');
+      } else {
+        console.error('Error logging out:', response.message);
+      }
+    } catch (error) {
+      console.error('An error occurred during logout:', error.message);
+    } finally {
+      handleMenuClose();
+    }
   };
+
 
   return (
     <Stack

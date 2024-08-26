@@ -31,3 +31,26 @@ export const login = async (userData) => {
         };
     }
 };
+
+export const logout = async (userData) => {
+  try {
+      const response = await axios.post(`${API_URL}logout`, userData);
+      return {
+          status: response.status,
+      };
+  } catch (error) {
+      return {
+          status: error.response?.status,
+          message: error.response?.data || error.message
+      };
+  }
+};
+
+
+export const  apiClient = axios.create({
+  baseURL: 'https://localhost:7275/api', // Assure-toi que le baseURL est correct
+  withCredentials: true, // Inclure toujours les cookies
+});
+
+
+

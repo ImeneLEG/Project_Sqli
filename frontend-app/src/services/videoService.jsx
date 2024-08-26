@@ -110,6 +110,7 @@ export const removeFromFavorites = async (userId, videoId) => {
 
 // Get the current logged-in user
 export const getCurrentUser = async () => {
+  
   try {
     const response = await apiClient.get(`/Auth/current-user`, {
       withCredentials: true, // Ensure credentials are sent with the request
