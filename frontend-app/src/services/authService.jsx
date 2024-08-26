@@ -4,7 +4,7 @@ const API_URL = 'https://localhost:7275/api/Auth/';
 
 export const signUp = async (userData) => {
     try {
-        const response = await axios.post(`${API_URL}register`, userData);
+        const response = await axios.post(`${API_URL}register`, userData );
         return {
             status: response.status,
             data: response.data
@@ -19,7 +19,7 @@ export const signUp = async (userData) => {
 
 export const login = async (userData) => {
     try {
-        const response = await axios.post(`${API_URL}login`, userData);
+        const response = await axios.post(`${API_URL}login`, userData , { withCredentials: true });
         return {
             status: response.status,
             data: response.data
