@@ -9,6 +9,7 @@ using Projet_Sqli.Entities;
 using Projet_Sqli.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 
 namespace Projet_Sqli.Services
@@ -171,25 +172,35 @@ namespace Projet_Sqli.Services
 
 
         // Les vidéos les plus regardées par pays
-        public async Task<Dictionary<string, Videos>> GetMostViewedVideosByCountryAsync()
+        public async Task<List<Videos>> GetMostViewedVideosByCountryAsync(int topX, string countryCode)
         {
-            var result = new Dictionary<string, Videos>();
-
-            foreach (var country in countries)
+            // Vérifier que le paramètre 'topX' est valide
+            if (topX <= 0)
             {
-                var mostViewedVideo = await _dbContext.Videos
-                    //.Where(v => v.TrendingRanks == country.Item1) // TrendingRanks doit contenir le code pays et aussi etre de format string
-                    //.OrderByDescending(v => long.Parse(v.Views))
-                    .FirstOrDefaultAsync();
-
-                if (mostViewedVideo != null)
-                {
-                    result.Add(country.Item2, mostViewedVideo);
-                }
+                throw new ArgumentException("Le paramètre 'topX' doit être supérieur à zéro.");
             }
 
-            return result;
+            // Vérifier que 'countryCode' est fourni
+            if (string.IsNullOrEmpty(countryCode))
+            {
+                throw new ArgumentException("Le paramètre 'countryCode' ne doit pas être vide.");
+            }
+
+            // Récupérer les vidéos les plus regardées pour un code de pays spécifique
+            var mostViewedVideos = await _dbContext.Videos
+                .Where(v => v.TrendingRanks.Any(tr => tr.Value.ContainsKey(countryCode))) // Vérifie si le code pays est présent dans le dictionnaire TrendingRanks
+                .OrderByDescending(v => v.TrendingRanks
+                    .SelectMany(tr => tr.Value)
+                    .Where(kvp => kvp.Key == countryCode)
+                    .Select(kvp => kvp.Value) // Sélectionner les valeurs des vues pour le code pays
+                    .DefaultIfEmpty(0) // Définit une valeur par défaut de 0 si aucune vue n'est trouvée
+                    .Max()) // Tri décroissant par le nombre maximal de vues pour le code pays
+                .Take(topX) // Prendre les X vidéos les plus vues
+                .ToListAsync();
+
+            return mostViewedVideos;
         }
+
 
         //récuperation des videos par id 
         public async Task<Videos> GetVideoByIdAsync(string videoId)

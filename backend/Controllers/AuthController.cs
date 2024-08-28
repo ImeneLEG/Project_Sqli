@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Projet_Sqli.Services;
 
 using Projet_Sqli.Entities;
 using Projet_Sqli.Data;
 using Microsoft.AspNetCore.Authorization;
+using Projet_Sqli.Services;
 
 namespace Projet_Sqli.Controllers
 {
@@ -17,12 +19,13 @@ namespace Projet_Sqli.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserService _userService;
 
-        public AuthController(ApplicationDbContext context)
+        public AuthController(ApplicationDbContext context, UserService userService)
         {
             _context = context;
+            _userService = userService;
         }
-
 
 
 
@@ -75,6 +78,53 @@ namespace Projet_Sqli.Controllers
             return Ok( new { role = $"{user.Role.Name}" , email=$"{user.Email}", country=$"{user.Country}" , username=$"{user.Username}" });
         }
 
+
+        [HttpPut("update")]
+       // [Authorize(Roles = "Admin")] // Autoriser seulement pour admin
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
+        {
+            // Rechercher l'utilisateur par ID
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé.");
+            }
+
+            // Mise à jour des champs de l'utilisateur
+            user.Username = updateUserDto.Username ?? user.Username;
+            user.Email = updateUserDto.Email ?? user.Email;
+            user.Country = updateUserDto.Country ?? user.Country;
+
+            if (!string.IsNullOrEmpty(updateUserDto.Password))
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(updateUserDto.Password);
+            }
+
+            user.UpdatedAt = DateTime.UtcNow;
+
+            // Sauvegarder les modifications dans la base de données
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Utilisateur mis à jour avec succès." });
+        }
+
+        // Méthode pour supprimer un utilisateur
+        [HttpDelete("delete/{id}")]
+        //[Authorize] // Autoriser seulement les utilisateurs connectés
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            // Rechercher l'utilisateur par ID
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé.");
+            }
+
+            // Supprimer l'utilisateur de la base de données
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Utilisateur supprimé avec succès." });
+        }
 
 
         [HttpPost("login")]
@@ -197,7 +247,13 @@ namespace Projet_Sqli.Controllers
         }
 
 
-
+        [HttpGet("stats/{year}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<MonthlyUserStats>>> GetMonthlyUserStats(int year)
+        {
+            var stats = await _userService.GetMonthlyUserStatsAsync(year);
+            return Ok(stats);
+        }
 
     }
 }

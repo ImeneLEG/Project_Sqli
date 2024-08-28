@@ -87,27 +87,47 @@ namespace Projet_Sqli.Controllers
 
         // Action pour utliser le service du chargement des viéos les plus regardées par pays
         [HttpGet("most-viewed-by-country")]
-        public async Task<IActionResult> GetMostViewedVideosByCountry()
+        public async Task<IActionResult> GetMostViewedVideosByCountry([FromQuery] int topX, [FromQuery] string countryCode)
         {
             try
             {
-                var mostViewedVideos = await _videoServices.GetMostViewedVideosByCountryAsync();
+                // Validation des paramètres
+                if (topX <= 0)
+                {
+                    return BadRequest("Le paramètre 'topX' doit être supérieur à zéro.");
+                }
+
+                if (string.IsNullOrEmpty(countryCode))
+                {
+                    return BadRequest("Le paramètre 'countryCode' ne doit pas être vide.");
+                }
+
+                // Appel du service pour obtenir les vidéos les plus regardées par pays
+                var mostViewedVideos = await _videoServices.GetMostViewedVideosByCountryAsync(topX, countryCode);
+
                 return Ok(mostViewedVideos);
             }
             catch (Exception ex)
             {
+                // Log l'erreur ici si nécessaire
                 return StatusCode(500, "Une erreur s'est produite lors de la récupération des vidéos les plus regardées par pays.");
             }
+
         }
+
+
 
         //recuperation des region pour les selectionner en front
         [HttpGet("regions")]
         public IActionResult GetRegions()
         {
-            var regions = _videoServices.GetRegions();
-            return Ok(regions);
-        }
+            {
+                var regions = _videoServices.GetRegions();
+                return Ok(regions);
+            }
 
+
+        }
 
     }
 }
