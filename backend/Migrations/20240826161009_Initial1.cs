@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Projet_Sqli.Migrations
 {
     /// <inheritdoc />
-    public partial class Initia : Migration
+    public partial class Initial1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,7 +55,7 @@ namespace Projet_Sqli.Migrations
                     PublishedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Thumbnail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Views = table.Column<string>(type: "navchar(max)", nullable: false),
+                    Views = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Likes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Tags = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -129,8 +129,8 @@ namespace Projet_Sqli.Migrations
                 columns: new[] { "Id", "CreatedAt", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2799), "user", new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2919) },
-                    { 2, new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2921), "admin", new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2923) }
+                    { 1, new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8253), "user", new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8312) },
+                    { 2, new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8317), "admin", new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8319) }
                 });
 
             migrationBuilder.CreateIndex(

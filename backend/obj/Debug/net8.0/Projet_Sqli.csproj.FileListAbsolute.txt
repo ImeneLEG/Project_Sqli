@@ -284,3 +284,4 @@ D:\SQLI\stage\back\backend\obj\Debug\net8.0\refint\Projet_Sqli.dll
 D:\SQLI\stage\back\backend\obj\Debug\net8.0\Projet_Sqli.pdb
 D:\SQLI\stage\back\backend\obj\Debug\net8.0\Projet_Sqli.genruntimeconfig.cache
 D:\SQLI\stage\back\backend\obj\Debug\net8.0\ref\Projet_Sqli.dll
+D:\SQLI\stage\back\backend\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

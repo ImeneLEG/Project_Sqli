@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Projet_Sqli.Data;
 using Projet_Sqli.Services;
-using Microsoft.AspNetCore.Authentication.Cookies; // authentication cookies
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens; // authentication cookies
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,14 +41,30 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure Cookie Authentication
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
+    };
+});
+    /*.AddCookie(options =>
     {
         options.LoginPath = "/api/auth/login";
         options.LogoutPath = "/api/auth/logout";
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.Cookie.SameSite = SameSiteMode.Lax;
         options.Events = new CookieAuthenticationEvents
         {
             OnRedirectToLogin = context =>
@@ -56,7 +74,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             }
         };
 
-    });
+    });*/
+    
 
 // Configure CORS with specific origins
 builder.Services.AddCors(options =>
@@ -64,7 +83,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5176") // Front-end URL
+
+            policy.WithOrigins("http://localhost:5173") // Front-end URL
+
+           
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials();
@@ -80,6 +102,7 @@ builder.Services.AddLogging(logging =>
 });
 
 var app = builder.Build();
+app.UseAuthentication();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -93,7 +116,7 @@ app.UseCors("AllowSpecificOrigins");
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

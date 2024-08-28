@@ -112,16 +112,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2799),
+                            CreatedAt = new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8253),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2919)
+                            UpdatedAt = new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8312)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2921),
+                            CreatedAt = new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8317),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 26, 16, 54, 49, 797, DateTimeKind.Local).AddTicks(2923)
+                            UpdatedAt = new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8319)
                         });
                 });
 
@@ -184,7 +184,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Comments")
                         .IsRequired()
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -203,7 +203,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Likes")
                         .IsRequired()
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime2");
@@ -222,7 +222,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("TrendingRanks")
                         .IsRequired()
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -235,7 +235,7 @@ namespace Projet_Sqli.Migrations
 
                     b.Property<string>("Views")
                         .IsRequired()
-                        .HasColumnType("json");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("VideoId");
 
