@@ -248,7 +248,7 @@ namespace Projet_Sqli.Controllers
 
 
         [HttpGet("stats/{year}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<MonthlyUserStats>>> GetMonthlyUserStats(int year)
         {
             var stats = await _userService.GetMonthlyUserStatsAsync(year);

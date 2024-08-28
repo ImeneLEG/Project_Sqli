@@ -82,7 +82,7 @@ namespace Projet_Sqli.Services
                     if (item != null)
                     {
                         var videoId = item["id"]?.ToString() ?? string.Empty;
-                       
+
 
                         // Check if the video already exists in the database
                         var existingVideo = await _dbContext.Videos
@@ -92,7 +92,7 @@ namespace Projet_Sqli.Services
                         {
                             var video = new Videos
                             {
-                                
+
                                 VideoId = videoId,
                                 Title = item["snippet"]?["title"]?.ToString() ?? string.Empty,
                                 Description = item["snippet"]?["description"]?.ToString() ?? string.Empty,
@@ -150,6 +150,7 @@ namespace Projet_Sqli.Services
 
             return videos;
         }
+
 
         // Analyser la durée de la vidéo
 
