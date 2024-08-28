@@ -13,7 +13,9 @@ const Feed = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRegion, setSelectedRegion] = useState("");
     const [selectedRegionName, setSelectedRegionName] = useState(""); 
+
     const { userId } = useParams();
+
 
     useEffect(() => {
         localStorage.removeItem('token');
