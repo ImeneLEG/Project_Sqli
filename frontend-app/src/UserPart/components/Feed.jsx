@@ -3,6 +3,7 @@ import { Box, Stack, Typography, Button, Menu, MenuItem } from "@mui/material";
 import { SideBar, Videos } from "./index";
 import { getTrendingVideos, getRegions, addToFavorites, removeFromFavorites, getCurrentUser, getUserFavoriteVideos } from "../../services/videoService";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useParams } from "react-router-dom";
 
 const Feed = () => {
     const [selectedCategory, setSelectedCategory] = useState("New");
@@ -11,49 +12,57 @@ const Feed = () => {
     const [regions, setRegions] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRegion, setSelectedRegion] = useState("");
-    const [userId, setUserId] = useState(null);
+    const [selectedRegionName, setSelectedRegionName] = useState(""); 
+    const { userId } = useParams();
 
     useEffect(() => {
+        localStorage.removeItem('token');
         // Fetch regions on component mount
         getRegions()
             .then((data) => setRegions(data))
             .catch(console.error);
 
         // Fetch current user ID on component mount
-        getCurrentUser()
-            .then((data) => setUserId(data.userId))
-            .catch(console.error);
+        
     }, []);
 
     useEffect(() => {
-      if (selectedCategory === "Favorites" && userId) {
-          getUserFavoriteVideos(userId)
-              .then((data) => {
-                  if (data && Array.isArray(data)) {
-                      // Set isFavorite to true for all videos in favorites
-                      const favoriteVideos = data.map(video => ({
-                          ...video,
-                          isFavorite: true,
-                      }));
-                      setVideos(favoriteVideos);
-                  } else {
-                      console.error("Unexpected data format:", data);
-                  }
-              })
-              .catch(console.error);
-      } else if (selectedRegion) {
-          getTrendingVideos(selectedRegion)
-              .then((data) => {
-                  if (data && Array.isArray(data)) {
-                      setVideos(data);
-                  } else {
-                      console.error("Unexpected data format:", data);
-                  }
-              })
-              .catch(console.error);
-      }
-  }, [selectedCategory, selectedRegion, userId]);
-  
+        if (selectedCategory === "Favorites" && userId) {
+            getUserFavoriteVideos(userId)
+                .then((data) => {
+                    if (data && Array.isArray(data)) {
+                        const favoriteVideos = data.map(video => ({
+                            ...video,
+                            isFavorite: true,
+                        }));
+                        setVideos(favoriteVideos);
+                    } else if (data.length === 0) {
+                        console.log("No favorite videos found.");
+                        setVideos([]); // Set an empty array if there are no favorites
+                    } else {
+                        console.error("Unexpected data format:", data);
+                    }
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 404) {
+                        console.log("User has no favorite videos.");
+                        setVideos([]); // No favorites, so set an empty array
+                    } else {
+                        console.error("Error fetching favorite videos:", error);
+                    }
+                });
+        } else if (selectedRegion) {
+            getTrendingVideos(selectedRegion)
+                .then((data) => {
+                    if (data && Array.isArray(data)) {
+                        setVideos(data);
+                    } else {
+                        console.error("Unexpected data format:", data);
+                    }
+                })
+                .catch(console.error);
+        }
+    }, [selectedCategory, selectedRegion, userId]);
 
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -61,6 +70,10 @@ const Feed = () => {
 
     const handleRegionSelect = (regionCode) => {
         setSelectedRegion(regionCode);
+        const selectedRegionObject = regions.find(region => region.item1 === regionCode);
+        if (selectedRegionObject) {
+            setSelectedRegionName(selectedRegionObject.item2);
+        }
         setSelectedCategory("New");
         setAnchorEl(null);
     };
@@ -75,16 +88,14 @@ const Feed = () => {
     };
 
     const handleRemoveFromFavorites = async (videoId) => {
-      if (!userId) return;
-      try {
-          await removeFromFavorites(userId, videoId);
-          // Remove the video from the local state immediately
-          setVideos((prevVideos) => prevVideos.filter(video => video.videoId !== videoId));
-      } catch (error) {
-          console.error("Error removing video from favorites:", error);
-      }
-  };
-  
+        if (!userId) return;
+        try {
+            await removeFromFavorites(userId, videoId);
+            setVideos((prevVideos) => prevVideos.filter(video => video.videoId !== videoId));
+        } catch (error) {
+            console.error("Error removing video from favorites:", error);
+        }
+    };
 
     return (
         <Stack sx={{ flexDirection: { sx: "column", md: "row" } }}>
@@ -113,7 +124,7 @@ const Feed = () => {
                 >
                     <SideBar
                         selectedCategory={selectedCategory}
-                        setSelectedCategory={setSelectedCategory} // Correct prop name
+                        setSelectedCategory={setSelectedCategory}
                     />
                     <Typography
                         variant="body2"
@@ -123,55 +134,67 @@ const Feed = () => {
                     </Typography>
                 </Box>
             )}
-                <Box p={2} sx={{ overflowY: "auto", height: "90vh", flex: "2" }}>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between">
-                        <Typography variant="h4" fontWeight="bold" mb={2} sx={{ color: "white" }}>
-                            {selectedCategory === "Favorites" ? 'Your Favorite Videos' : `Trending in ${selectedRegion}`}
-                        </Typography>
-                        {/* Conditionally render the Select Region button */}
-                        {selectedCategory !== "Favorites" && (
-                            <Box>
-                                <Button
-                                    aria-controls="region-menu"
-                                    aria-haspopup="true"
-                                    onClick={handleMenuOpen}
-                                    variant="contained"
-                                    color="error"
-                                    sx={{ mr: 1 }}
-                                >
-                                    Select Region
-                                </Button>
-                                <Menu
-                                    id="region-menu"
-                                    anchorEl={anchorEl}
-                                    open={Boolean(anchorEl)}
-                                    onClose={() => setAnchorEl(null)}
-                                >
-                                    {regions.length > 0 ? (
-                                        regions.map((region) => (
-                                            <MenuItem
-                                                key={region.item1}
-                                                onClick={() => handleRegionSelect(region.item1)}
-                                                style={{ color: "black" }}
-                                            >
-                                                {region.item2}
-                                            </MenuItem>
-                                        ))
-                                    ) : (
-                                        <MenuItem disabled>No regions available</MenuItem>
-                                    )}
-                                </Menu>
-                            </Box>
+            <Box p={2} sx={{ overflowY: "auto", height: "90vh", flex: "2" }}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Typography variant="h4" fontWeight="bold" mb={2} sx={{ color: "white" }}>
+                        {selectedCategory === "Favorites" ? (
+                            'Your Favorite Videos'
+                        ) : (
+                            <>
+                                Trending <span style={{ color: "red" }}>{regions.find(region => region.item1 === selectedRegion)?.item2}</span> Videos
+                            </>
                         )}
-                    </Stack>
+                    </Typography>
+
+                    {selectedCategory !== "Favorites" && (
+                        <Box>
+                            <Button
+                                aria-controls="region-menu"
+                                aria-haspopup="true"
+                                onClick={handleMenuOpen}
+                                variant="contained"
+                                color="error"
+                                sx={{ mr: 1 }}
+                            >
+                                Select Region
+                            </Button>
+                            <Menu
+                                id="region-menu"
+                                anchorEl={anchorEl}
+                                open={Boolean(anchorEl)}
+                                onClose={() => setAnchorEl(null)}
+                            >
+                                {regions.length > 0 ? (
+                                    regions.map((region) => (
+                                        <MenuItem
+                                            key={region.item1}
+                                            onClick={() => handleRegionSelect(region.item1)}
+                                            style={{ color: "black" }}
+                                        >
+                                            {region.item2}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>No regions available</MenuItem>
+                                )}
+                            </Menu>
+                        </Box>
+                    )}
+                </Stack>
+
+                {videos.length > 0 ? (
                     <Videos
                         videos={videos}
                         sidebarOpen={sidebarOpen}
                         onAddToFavorites={handleAddToFavorites}
                         onRemoveFromFavorites={handleRemoveFromFavorites}
                     />
-                </Box>
-
+                ) : (
+                    <Typography variant="h5" color="white">
+                        {selectedCategory === "Favorites" ? "You have no favorite videos." : "No videos available."}
+                    </Typography>
+                )}
+            </Box>
         </Stack>
     );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Stack, Typography, IconButton, Menu, MenuItem, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import logo from './logo.svg';
 import SearchBar from './SearchBar';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -8,6 +8,7 @@ import {logout} from '../../services/authService'
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+    const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleMenuOpen = (event) => {
@@ -21,6 +22,9 @@ const Navbar = () => {
   const handleLogout = () => {
     // Implement your logout logic here
     console.log('Logged out');
+    logout();
+    localStorage.removeItem('token');
+    navigate('./login');
     handleMenuClose();
   };
 
@@ -31,7 +35,7 @@ const Navbar = () => {
             p={1}
             sx={{ position: 'sticky', background: '#000', justifyContent: 'space-between', top: '0', zIndex: 2 }}
         >
-            <Link to='/' style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Link to='#' style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <img src={logo} height={50} style={{ marginLeft: '55px' }} />
                 <Typography
                     variant='h6'

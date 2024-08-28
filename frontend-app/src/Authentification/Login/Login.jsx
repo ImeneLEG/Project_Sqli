@@ -16,7 +16,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Alert from '@mui/material/Alert';
-import logo from '../../UserPart/components/logo.svg'
+import logo from '../../UserPart/components/logo.svg';
 
 function Copyright(props) {
   return (
@@ -55,7 +55,7 @@ const theme = createTheme({
 export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState(''); // State for handling error messages
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -75,22 +75,26 @@ export default function Login() {
     };
 
     try {
-      const response = await login(userData); // Call the login function
+      const response = await login(userData);
       console.log('Success:', response);
 
       if (response.status === 200) {
-        const userRole = response.data.roleName;
+        const token = response.data.token; // Récupère le token JWT de la réponse
+        localStorage.setItem('token', token); // Stocke le JWT dans le stockage local
+
+        const userId = response.data.user.id; // Récupère l'ID de l'utilisateur
+        const userRole = response.data.user.role.name; // Utilisation de la clé correcte pour le rôle
         if (userRole === 'user') {
-          navigate('/trendingVideos');
+          navigate(`/trendingVideos/${userId}`);
         } else if (userRole === 'admin') {
           navigate('/admin');
         }
       } else {
-        setErrorMessage('Login failed. Please check your email and password.'); // Set error message
+        setErrorMessage('Login failed. Please check your email and password.');
       }
     } catch (error) {
       console.error('Error:', error);
-      setErrorMessage('Email or password not correct. Please try again later.'); // Set error message
+      setErrorMessage('Email or password not correct. Please try again later.');
     }
   };
 
