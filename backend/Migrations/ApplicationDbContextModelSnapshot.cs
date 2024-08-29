@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_Sqli.Data;
 
@@ -12,11 +11,9 @@ using Projet_Sqli.Data;
 namespace Projet_Sqli.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240817230419_initialCreate")]
-    partial class initialCreate
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,16 +112,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(8888),
+                            CreatedAt = new DateTime(2024, 8, 28, 17, 41, 57, 226, DateTimeKind.Local).AddTicks(6086),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9027)
+                            UpdatedAt = new DateTime(2024, 8, 28, 17, 41, 57, 226, DateTimeKind.Local).AddTicks(6130)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9031),
+                            CreatedAt = new DateTime(2024, 8, 28, 17, 41, 57, 226, DateTimeKind.Local).AddTicks(6133),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9033)
+                            UpdatedAt = new DateTime(2024, 8, 28, 17, 41, 57, 226, DateTimeKind.Local).AddTicks(6134)
                         });
                 });
 

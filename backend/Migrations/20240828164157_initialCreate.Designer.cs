@@ -12,8 +12,8 @@ using Projet_Sqli.Data;
 namespace Projet_Sqli.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240819113147_UpdateTypeOfVideoDuration")]
-    partial class UpdateTypeOfVideoDuration
+    [Migration("20240828164157_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,36 @@ namespace Projet_Sqli.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Projet_Sqli.Entities.Favoris", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSDATETIME()");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VideoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Favoris");
+                });
 
             modelBuilder.Entity("Projet_Sqli.Entities.Historique", b =>
                 {
@@ -85,16 +115,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 19, 12, 31, 47, 532, DateTimeKind.Local).AddTicks(4129),
+                            CreatedAt = new DateTime(2024, 8, 28, 17, 41, 57, 226, DateTimeKind.Local).AddTicks(6086),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 19, 12, 31, 47, 532, DateTimeKind.Local).AddTicks(4173)
+                            UpdatedAt = new DateTime(2024, 8, 28, 17, 41, 57, 226, DateTimeKind.Local).AddTicks(6130)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 19, 12, 31, 47, 532, DateTimeKind.Local).AddTicks(4176),
+                            CreatedAt = new DateTime(2024, 8, 28, 17, 41, 57, 226, DateTimeKind.Local).AddTicks(6133),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 19, 12, 31, 47, 532, DateTimeKind.Local).AddTicks(4178)
+                            UpdatedAt = new DateTime(2024, 8, 28, 17, 41, 57, 226, DateTimeKind.Local).AddTicks(6134)
                         });
                 });
 
@@ -168,9 +198,8 @@ namespace Projet_Sqli.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Duration")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
 
                     b.Property<int>("Id")
                         .HasColumnType("int");

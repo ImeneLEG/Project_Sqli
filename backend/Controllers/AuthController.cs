@@ -193,8 +193,10 @@ namespace Projet_Sqli.Controllers
                 });
             }
 
+            Console.WriteLine("User is not authenticated or missing claims.");
             return Unauthorized();
         }
+
 
 
 
