@@ -9,6 +9,10 @@ using System.Security.Claims;
 using Projet_Sqli.Entities;
 using Projet_Sqli.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Projet_Sqli.Controllers
 {
@@ -17,12 +21,13 @@ namespace Projet_Sqli.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(ApplicationDbContext context)
+        public AuthController(ApplicationDbContext context , IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
-
 
 
 
@@ -48,12 +53,8 @@ namespace Projet_Sqli.Controllers
                     UpdatedAt = DateTime.UtcNow
                 };
 
-                if (_context.Roles.Any(u => u.Name == role.Name))
-                {
-                    _context.Roles.Add(role);
-                    await _context.SaveChangesAsync(); // Assurez-vous que l'ID du rôle est généré avant de l'utiliser
-                }
-
+                _context.Roles.Add(role);
+                await _context.SaveChangesAsync(); // Assurez-vous que l'ID du rôle est généré avant de l'utiliser
             }
 
             // Créer un nouvel utilisateur
@@ -72,8 +73,32 @@ namespace Projet_Sqli.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok( new { role = $"{user.Role.Name}" , email=$"{user.Email}", country=$"{user.Country}" , username=$"{user.Username}" });
+            // Générer le jeton JWT après l'inscription réussie
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role.Name),
+                new Claim("Country", user.Country),
+                new Claim("userId", user.Id.ToString()),
+                new Claim("Email", user.Email)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
+                claims,
+                expires: DateTime.UtcNow.AddMinutes(60),
+                signingCredentials: signIn
+            );
+            var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return Ok(new { Token = tokenValue, User = user });
         }
+
 
 
 
@@ -86,47 +111,64 @@ namespace Projet_Sqli.Controllers
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
             {
+
                 return BadRequest("Email ou mot de passe incorrect.");
             }
 
             // Create claims for the user, including the userId
-            var claims = new List<Claim>
+            var claims = new[]
             {
+                new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:subject"]),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+
+
+
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role.Name),
                 new Claim("Country", user.Country),
-                new Claim("userId", user.Id.ToString()) // Add userId as a claim
+                new Claim("userId", user.Id.ToString()), // Add userId as a claim
+                new Claim("Email", user.Email.ToString())
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = true
-            };
 
-            // Authenticate the user
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity), authProperties);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:key"]));
+            var signIn = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
+                claims, expires: DateTime.UtcNow.AddMinutes(60),
+                signingCredentials : signIn
+                );
+            string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return Ok(new
-            {
-                Message = "Connexion réussie.",
-                RoleMessage = $"Vous êtes {user.Role.Name}.",
-                Country = $"{user.Country}",
-                Email = $"{user.Email}",
-                RoleName =$"{user.Role.Name}"
-            });
+            return Ok(new { Token = tokenValue, User = user });
+            
+            //return Ok(user);
         }
+
+
+
+
+
 
 
 
 
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        [Authorize]
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            // En JWT, la déconnexion implique que le client supprime le jeton JWT stocké.
+            // Cependant, nous pouvons également ajouter des entêtes HTTP pour empêcher la mise en cache.
+
+            // Empêcher la mise en cache de la page de réponse
+            Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
+
             return Ok("Déconnexion réussie.");
         }
+
 
 
 

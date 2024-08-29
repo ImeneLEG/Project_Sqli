@@ -29,10 +29,16 @@ namespace Projet_Sqli.Controllers
                 return NotFound();
             }
 
-            await _historiqueService.AddHistoryAsync(userId, videoId);
+            // Vérifier si la vidéo est déjà dans l'historique
+            var historyExists = await _historiqueService.IsVideoInHistoryAsync(userId, videoId);
+            if (!historyExists)
+            {
+                await _historiqueService.AddHistoryAsync(userId, videoId);
+            }
 
             return Ok(video);
         }
+
 
 
 

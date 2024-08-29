@@ -31,6 +31,12 @@ namespace Projet_Sqli.Services
                                              .Select(f => f.VideoId)
                                              .ToList();
 
+            if (!favoriteVideoIds.Any())
+            {
+                // If no favorite videos are found, return an empty list
+                return new List<Videos>();
+            }
+
             var favoriteVideos = new List<Videos>();
             foreach (var videoId in favoriteVideoIds)
             {
