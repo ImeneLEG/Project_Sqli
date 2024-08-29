@@ -11,9 +11,12 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
     }, [video.isFavorite]);
 
     const handleFavoriteClick = () => {
+        console.log("Favorite icon clicked. Current state:", isFavorite);
         if (isFavorite) {
+            console.log("Removing from favorites:", video.videoId);
             onRemoveFromFavorites(video.videoId);
         } else {
+            console.log("Adding to favorites:", video.videoId);
             onAddToFavorites(video.videoId);
         }
         setIsFavorite(!isFavorite);
@@ -86,6 +89,3 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
 };
 
 export default VideoCard;
-
-
-

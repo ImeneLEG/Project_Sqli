@@ -79,10 +79,17 @@ export const getUserFavoriteVideos = async (userId) => {
     console.log(response.data); // Log the response data
     return response.data;
   } catch (error) {
-    console.error('Error fetching favorite videos:', error);
-    throw error;
+    if (error.response && error.response.status === 404) {
+      console.log('No favorite videos found for this user.');
+      return []; // Return an empty array if the user has no favorite videos
+    } else {
+      console.error('Error fetching favorite videos:', error);
+      throw error; // Re-throw other errors to be handled elsewhere
+    }
   }
 };
+
+
 
 // Add video to favorites
 export const addToFavorites = async (userId, videoId) => {
@@ -109,15 +116,3 @@ export const removeFromFavorites = async (userId, videoId) => {
 };
 
 // Get the current logged-in user
-export const getCurrentUser = async () => {
-  try {
-    const response = await apiClient.get(`/Auth/current-user`, {
-      withCredentials: true, // Ensure credentials are sent with the request
-    });
-    console.log(response.data); // Log the response data
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching current user:', error.response ? error.response.data : error.message);
-    throw error;
-  }
-};

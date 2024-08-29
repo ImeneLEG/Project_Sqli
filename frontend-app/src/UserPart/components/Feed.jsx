@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Box, Stack, Typography, Button, Menu, MenuItem } from "@mui/material";
 import { SideBar, Videos } from "./index";
-import { getTrendingVideos, getRegions, addToFavorites, removeFromFavorites, getCurrentUser, getUserFavoriteVideos } from "../../services/videoService";
+import { getTrendingVideos, getRegions, addToFavorites, removeFromFavorites, getUserFavoriteVideos, watchVideo } from "../../services/videoService";
+import HistoriqueService from "../../services/historyService";
+import { getCurrentUser } from "../../services/authService";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const Feed = () => {
@@ -11,71 +13,97 @@ const Feed = () => {
     const [regions, setRegions] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRegion, setSelectedRegion] = useState("");
-    const [selectedRegionName, setSelectedRegionName] = useState(""); // Nouvel état pour le nom du pays
+    const [selectedRegionName, setSelectedRegionName] = useState("");
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        // Fetch regions on component mount
+        console.log("Fetching regions...");
         getRegions()
-            .then((data) => setRegions(data))
-            .catch(console.error);
+            .then((data) => {
+                setRegions(data);
+                console.log("Regions fetched successfully:", data);
+            })
+            .catch((error) => {
+                console.error("Error fetching regions:", error);
+            });
 
-        // Fetch current user ID on component mount
+        console.log("Fetching current user...");
         getCurrentUser()
-            .then((data) => setUserId(data.userId))
-            .catch(console.error);
+            .then((data) => {
+                setUserId(data.userId);
+                console.log("Current user fetched successfully:", data);
+            })
+            .catch((error) => {
+                console.error("Error fetching current user:", error);
+            });
     }, []);
 
     useEffect(() => {
+        console.log("Selected category:", selectedCategory);
+        console.log("Selected region:", selectedRegion);
+        console.log("User ID:", userId); // Ajout de ce log
+
         if (selectedCategory === "Favorites" && userId) {
+            console.log("Fetching favorite videos...");
             getUserFavoriteVideos(userId)
                 .then((data) => {
-                    if (data && Array.isArray(data)) {
-                        // Set isFavorite to true for all videos in favorites
-                        const favoriteVideos = data.map(video => ({
-                            ...video,
-                            isFavorite: true,
-                        }));
-                        setVideos(favoriteVideos);
-                    } else {
-                        console.error("Unexpected data format:", data);
-                    }
+                    setVideos(data);
+                    console.log("Favorite videos fetched successfully:", data);
                 })
-                .catch(console.error);
-        } else if (selectedRegion) {
+                .catch((error) => {
+                    console.error(`Error fetching favorite videos for user ${userId}:`, error);
+                });
+        } else if (selectedCategory === "History" && userId) {
+            console.log("Fetching watch history...");
+            HistoriqueService.getHistoryByUser(userId)
+                .then((data) => {
+                    setVideos(data);
+                    console.log("Watch history fetched successfully:", data);
+                })
+                .catch((error) => {
+                    console.error(`Error fetching history for user ${userId}:`, error);
+                });
+        } else if (selectedCategory === "Home" && selectedRegion) {
+            console.log("Fetching trending videos...");
             getTrendingVideos(selectedRegion)
                 .then((data) => {
-                    if (data && Array.isArray(data)) {
-                        setVideos(data);
-                    } else {
-                        console.error("Unexpected data format:", data);
-                    }
+                    setVideos(data);
+                    console.log("Trending videos fetched successfully:", data);
                 })
-                .catch(console.error);
+                .catch((error) => {
+                    console.error(`Error fetching trending videos for region ${selectedRegion}:`, error);
+                });
         }
     }, [selectedCategory, selectedRegion, userId]);
 
-    const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+        console.log("Sidebar toggled:", !sidebarOpen);
+    };
 
-    const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+        console.log("Menu opened:", event.currentTarget);
+    };
 
     const handleRegionSelect = (regionCode) => {
+        console.log("Region selected:", regionCode);
         setSelectedRegion(regionCode);
-
-        // Trouver et définir le nom complet du pays en fonction du code de région
         const selectedRegionObject = regions.find(region => region.item1 === regionCode);
         if (selectedRegionObject) {
-            setSelectedRegionName(selectedRegionObject.item2); // Mettre à jour le nom du pays
+            setSelectedRegionName(selectedRegionObject.item2);
+            console.log("Selected region name:", selectedRegionObject.item2);
         }
-
-        setSelectedCategory("New");
+        setSelectedCategory("Home");
         setAnchorEl(null);
     };
 
     const handleAddToFavorites = async (videoId) => {
         if (!userId) return;
         try {
+            console.log("Adding video to favorites:", videoId);
             await addToFavorites(userId, videoId);
+            console.log("Video added to favorites successfully:", videoId);
         } catch (error) {
             console.error("Error adding video to favorites:", error);
         }
@@ -84,11 +112,23 @@ const Feed = () => {
     const handleRemoveFromFavorites = async (videoId) => {
         if (!userId) return;
         try {
+            console.log("Removing video from favorites:", videoId);
             await removeFromFavorites(userId, videoId);
-            // Remove the video from the local state immediately
             setVideos((prevVideos) => prevVideos.filter(video => video.videoId !== videoId));
+            console.log("Video removed from favorites successfully:", videoId);
         } catch (error) {
             console.error("Error removing video from favorites:", error);
+        }
+    };
+
+    const handleWatchVideo = async (videoId) => {
+        if (!userId) return;
+        try {
+            console.log("Watching video:", videoId);
+            await watchVideo(userId, videoId);
+            console.log("Video added to history successfully:", videoId);
+        } catch (error) {
+            console.error("Error watching video:", error);
         }
     };
 
@@ -119,7 +159,7 @@ const Feed = () => {
                 >
                     <SideBar
                         selectedCategory={selectedCategory}
-                        setSelectedCategory={setSelectedCategory} // Correct prop name
+                        setSelectedCategory={setSelectedCategory}
                     />
                     <Typography
                         variant="body2"
@@ -132,17 +172,16 @@ const Feed = () => {
             <Box p={2} sx={{ overflowY: "auto", height: "90vh", flex: "2" }}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Typography variant="h4" fontWeight="bold" mb={2} sx={{ color: "white" }}>
-                        {selectedCategory === "Favorites" ? (
-                            'Your Favorite Videos'
-                        ) : (
-                            <>
-                                Trending <span style={{ color: "red" }}>{regions.find(region => region.item1 === selectedRegion)?.item2}</span> Videos
-                            </>
-                        )}
+                        {selectedCategory === "Favorites"
+                            ? 'Your Favorite Videos'
+                            : selectedCategory === "History"
+                                ? 'Your Watch History'
+                                : <>
+                                    Trending <span style={{ color: "red" }}>{regions.find(region => region.item1 === selectedRegion)?.item2}</span> Videos
+                                </>}
                     </Typography>
 
-                    {/* Conditionally render the Select Region button */}
-                    {selectedCategory !== "Favorites" && (
+                    {selectedCategory !== "Favorites" && selectedCategory !== "History" && (
                         <Box>
                             <Button
                                 aria-controls="region-menu"
@@ -177,12 +216,24 @@ const Feed = () => {
                         </Box>
                     )}
                 </Stack>
-                <Videos
-                    videos={videos}
-                    sidebarOpen={sidebarOpen}
-                    onAddToFavorites={handleAddToFavorites}
-                    onRemoveFromFavorites={handleRemoveFromFavorites}
-                />
+
+                {videos.length > 0 ? (
+                    <Videos
+                        videos={videos}
+                        sidebarOpen={sidebarOpen}
+                        onAddToFavorites={handleAddToFavorites}
+                        onRemoveFromFavorites={handleRemoveFromFavorites}
+                        onWatchVideo={handleWatchVideo}
+                    />
+                ) : (
+                    <Typography variant="h5" color="white">
+                        {selectedCategory === "Favorites"
+                            ? "You have no favorite videos."
+                            : selectedCategory === "History"
+                                ? "You have no watch history."
+                                : "No videos available."}
+                    </Typography>
+                )}
             </Box>
         </Stack>
     );

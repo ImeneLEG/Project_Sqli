@@ -3,6 +3,7 @@ import React from "react";
 import VideoCard from "./VideoCard";
 
 const Videos = ({ videos, sidebarOpen, direction, onAddToFavorites, onRemoveFromFavorites }) => {
+    console.log("Videos received:", videos); // Ajout de ce log
     if (!videos || videos.length === 0) {
         return (
             <Box sx={{ textAlign: "center", marginTop: "20px" }}>

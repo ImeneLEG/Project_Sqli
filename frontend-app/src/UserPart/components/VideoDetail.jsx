@@ -3,17 +3,45 @@ import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { Box, Typography } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
-import { getVideoById } from "../../services/videoService";
+import { getVideoById, watchVideo } from "../../services/videoService";
+import { getCurrentUser } from "../../services/authService";
 
 const VideoDetail = () => {
     const [videoDetail, setVideoDetail] = useState(null);
     const { videoId } = useParams();
-     console.log(videoId)
+    const [userId, setUserId] = useState(null);
+
     useEffect(() => {
-        getVideoById(videoId).then((data) => {
-            setVideoDetail(data);
-        }).catch(console.error);
+        // Fetch the current user ID
+        getCurrentUser()
+            .then((data) => setUserId(data.userId))
+            .catch(console.error);
+    }, []);
+
+    useEffect(() => {
+        getVideoById(videoId)
+            .then((data) => {
+                setVideoDetail(data);
+                console.log(`Video ${videoId} details fetched successfully.`);
+            })
+            .catch((error) => {
+                console.error(`Error fetching video ${videoId} details:`, error);
+            });
     }, [videoId]);
+
+    const handleVideoPlay = () => {
+        console.log(`Video ${videoId} is being watched.`);
+        if (userId) {
+            watchVideo(userId, videoId)
+                .then(() => {
+                    console.log(`Video ${videoId} added to history for user ${userId}.`);
+                })
+                .catch((error) => {
+                    console.error(`Error adding video ${videoId} to history:`, error);
+                });
+        }
+    };
+
 
     if (!videoDetail) return <p>Loading...</p>;
 
@@ -41,6 +69,7 @@ const VideoDetail = () => {
                         controls
                         width="100%"
                         height="100%"
+                        onPlay={handleVideoPlay}
                         style={{ position: 'absolute', top: '0', left: '0', borderRadius: '10px' }}
                     />
                 </Box>
