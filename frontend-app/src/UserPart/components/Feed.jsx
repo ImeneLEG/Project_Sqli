@@ -57,8 +57,16 @@ const Feed = () => {
             console.log("Fetching watch history...");
             HistoriqueService.getHistoryByUser(userId)
                 .then((data) => {
-                    setVideos(data);
-                    console.log("Watch history fetched successfully:", data);
+                    // Map the data to match the structure expected by VideoCard
+                    const formattedData = data.map(item => ({
+                        videoId: item.video.videoId,
+                        title: item.video.title,
+                        thumbnail: item.video.thumbnail,
+                        channelTitle: item.video.channelTitle,
+                        // Add other necessary fields from the video object
+                    }));
+                    setVideos(formattedData);
+                    console.log("Watch history fetched and formatted successfully:", formattedData);
                 })
                 .catch((error) => {
                     console.error(`Error fetching history for user ${userId}:`, error);

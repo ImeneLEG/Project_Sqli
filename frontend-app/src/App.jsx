@@ -7,6 +7,7 @@ import Login from './Authentification/Login/Login';
 import SignUp from './Authentification/SignUp/SignUp';
 import Admin from './AdminPart/Admin';
 import LandingPage from './LandingPage/LandingPage';
+import ProtectedRoute from './UserPart/components/ProtectedRoute';
 
 
 const AppWrapper = () => {
@@ -21,7 +22,10 @@ const AppWrapper = () => {
         <Box sx={{ backgroundColor: '#000' }}>
           <Navbar />
           <Routes>
-            <Route path='/trendingVideos' exact element={<Feed />} />
+            <Route path="/trendingVideos/:userId" element={
+                          <ProtectedRoute>
+                            <Feed />
+                          </ProtectedRoute>} />
             <Route path='/video/:videoId' exact element={<VideoDetail />} />
             <Route path='/search/:searchTerm' exact element={<SearchFeed />} />
             <Route path='/user' exact element={<Feed />} />
