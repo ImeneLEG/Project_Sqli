@@ -83,8 +83,11 @@ const Feed = () => {
     useEffect(() => {
         console.log("Selected category:", selectedCategory);
         console.log("Selected region:", selectedRegion);
-        console.log("User ID:", userId); // Ajout de ce log
-
+        console.log("User ID:", userId);
+    
+        // Clear videos state when switching categories
+        setVideos([]);
+    
         if (selectedCategory === "Favorites" && userId) {
             console.log("Fetching favorite videos...");
             getUserFavoriteVideos(userId)
@@ -99,13 +102,11 @@ const Feed = () => {
             console.log("Fetching watch history...");
             HistoriqueService.getHistoryByUser(userId)
                 .then((data) => {
-                    // Map the data to match the structure expected by VideoCard
                     const formattedData = data.map(item => ({
                         videoId: item.video.videoId,
                         title: item.video.title,
-                       thumbnail: item.video.thumbnail,
+                        thumbnail: item.video.thumbnail,
                         channelTitle: item.video.channelTitle,
-                        // Add other necessary fields from the video object
                     }));
                     setVideos(formattedData);
                     console.log("Watch history fetched and formatted successfully:", formattedData);
@@ -125,6 +126,7 @@ const Feed = () => {
                 });
         }
     }, [selectedCategory, selectedRegion, userId]);
+    
 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
