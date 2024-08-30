@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,7 +13,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { signUp } from '../../services/authService';
 import Visibility from '@mui/icons-material/Visibility';
@@ -20,7 +20,12 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Alert from '@mui/material/Alert';
-import logo from '../../UserPart/components/logo.svg'
+import logo from '../../UserPart/components/logo.svg';
+import { getRegions } from '../../services/videoService'; // Import your getRegions function
+import FormControl from '@mui/material/FormControl';  // Added import
+import InputLabel from '@mui/material/InputLabel';  // Added import
+import Select from '@mui/material/Select';  // Added import
+import MenuItem from '@mui/material/MenuItem';  // Added import
 
 function Copyright(props) {
   return (
@@ -38,7 +43,7 @@ function Copyright(props) {
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#bf2904', // Couleur personnalisée pour les boutons et le focus des champs
+      main: '#bf2904', // Custom color for buttons and field focus
     },
   },
   components: {
@@ -47,7 +52,7 @@ const theme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             '&.Mui-focused fieldset': {
-              borderColor: '#bf2904', // Couleur personnalisée pour la bordure en focus
+              borderColor: '#bf2904', // Custom color for focus border
             },
           },
         },
@@ -57,12 +62,27 @@ const theme = createTheme({
 });
 
 export default function SignUp() {
-
   const navigate = useNavigate();
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // State for handling error messages
+  const [regions, setRegions] = useState([]);
 
-  const [showPassword, setShowPassword] = React.useState(false); // État pour gérer la visibilité du mot de passe
-  const [errorMessage, setErrorMessage] = React.useState(''); // State for handling error messages
+  useEffect(() => {
+    // Fetch regions using the getRegions function from your video service
+    const fetchRegions = async () => {
+      try {
+        const regionsData = await getRegions();
+        console.log('Fetched regions:', regionsData); // Log fetched data
+        setRegions(regionsData);
+      } catch (error) {
+        console.error('Error fetching regions:', error);
+      }
+    };
+  
+    fetchRegions();
+  }, []);
+  
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -79,58 +99,45 @@ export default function SignUp() {
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
     return hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar;
-};
+  };
 
-
-
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    
-
     const password = data.get('password');
 
     // Validate password
     if (!validatePassword(password)) {
-        setErrorMessage('Password must contain at least one number, one special character, one lowercase letter, and one uppercase letter.');
-        return;
+      setErrorMessage('Password must contain at least one number, one special character, one lowercase letter, and one uppercase letter.');
+      return;
     }
-    // Créer l'objet à envoyer au backend
+
+    // Create the object to send to the backend
     const userData = {
       Username: data.get('firstName'),
       Email: data.get('email'),
       Password: password,
       Country: data.get('country'),
       Role: {
-        Name: 'user', // Rôle par défaut
-      }
+        Name: 'user', // Default role
+      },
     };
 
-
-    // Envoyer les données au backend via axios
-    try{
+    // Send the data to the backend via signUp function
+    try {
       const response = await signUp(userData);
 
-      if(response.status === 200){
-        console.log('Succès:', response.data);
+      if (response.status === 200) {
+        console.log('Success:', response.data);
         navigate('/login');
-      }else{
-        setErrorMessage('Email already taken.'); // Set error message
+      } else {
+        setErrorMessage('Email already taken.');
       }
-      
-      
-    }catch (error) {
+    } catch (error) {
       console.error('Error:', error);
-      setErrorMessage('Password must contain at least one number, one special character, one lowercase letter, and one uppercase letter. '); // Set error message
+      setErrorMessage('Error occurred while signing up.');
     }
-    
-      
   };
-
-
-
-
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -147,7 +154,7 @@ export default function SignUp() {
           <img
             src={logo}
             alt="YouTube Logo"
-            style={{ width: 30, height: 30, marginBottom: 8 }} // Ajuster la taille et la marge selon vos préférences
+            style={{ width: 30, height: 30, marginBottom: 8 }}
           />
           <Typography component="h1" variant="h5">
             Sign up to TrendyTube
@@ -171,15 +178,23 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="country"
-                  label="Country"
-                  name="country"
-                  autoComplete="family-name"
-                />
+                <FormControl fullWidth required>
+                  <InputLabel id="country-label">Country</InputLabel>
+                  <Select
+                    labelId="country-label"
+                    id="country"
+                    name="country"
+                    label="Country"
+                  >
+                    {regions.map((region) => (
+                      <MenuItem key={region.code} value={region.code}>
+                        {region.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   required
@@ -191,12 +206,12 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-              <TextField
+                <TextField
                   required
                   fullWidth
                   name="password"
                   label="Password"
-                  type={showPassword ? 'text' : 'password'} // Utilisation de l'état pour définir le type
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   autoComplete="new-password"
                   InputProps={{
@@ -212,7 +227,8 @@ export default function SignUp() {
                         </IconButton>
                       </InputAdornment>
                     ),
-                  }} />
+                  }}
+                />
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
