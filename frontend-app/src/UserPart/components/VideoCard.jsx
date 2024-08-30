@@ -5,15 +5,20 @@ import { CheckCircle, Favorite, FavoriteBorder } from "@mui/icons-material";
 
 const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites }) => {
     const [isFavorite, setIsFavorite] = useState(video.isFavorite || false);
+    // Check if thumbnail exists and replace 'default' with 'hqdefault'
+    const thumbnailUrl = video.thumbnail ? video.thumbnail.replace("default", "hqdefault") : '';
 
     useEffect(() => {
         setIsFavorite(video.isFavorite);
     }, [video.isFavorite]);
 
     const handleFavoriteClick = () => {
+        console.log("Favorite icon clicked. Current state:", isFavorite);
         if (isFavorite) {
+            console.log("Removing from favorites:", video.videoId);
             onRemoveFromFavorites(video.videoId);
         } else {
+            console.log("Adding to favorites:", video.videoId);
             onAddToFavorites(video.videoId);
         }
         setIsFavorite(!isFavorite);
@@ -37,7 +42,7 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
                 <Link to={`/video/${video.videoId}`} style={{ textDecoration: "none" }}>
                     <CardMedia
                         component="img"
-                        image={video.thumbnail.replace("default", "hqdefault")}
+                        image={thumbnailUrl}
                         alt={video.title}
                         sx={{ width: "100%", height: "190px", transition: "width 0.3s ease, height 0.3s ease" }}
                     />
@@ -86,6 +91,3 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
 };
 
 export default VideoCard;
-
-
-

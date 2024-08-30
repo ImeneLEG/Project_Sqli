@@ -14,6 +14,8 @@ export const getTrendingVideos = async (regionCode) => {
   }
 };
 
+
+
 // Fetch video by ID
 export const getVideoById = async (videoId) => {
   try {
@@ -116,15 +118,3 @@ export const removeFromFavorites = async (userId, videoId) => {
 };
 
 // Get the current logged-in user
-export const getCurrentUser = async () => {
-  try {
-    const response = await apiClient.get(`/Auth/current-user`, {
-      withCredentials: true, // Ensure credentials are sent with the request
-    });
-    console.log(response.data); // Log the response data
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching current user:', error.response ? error.response.data : error.message);
-    throw error;
-  }
-};
