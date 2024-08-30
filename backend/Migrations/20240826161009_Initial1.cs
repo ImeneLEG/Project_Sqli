@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Projet_Sqli.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class Initial1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -129,8 +129,8 @@ namespace Projet_Sqli.Migrations
                 columns: new[] { "Id", "CreatedAt", "Name", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(8888), "user", new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9027) },
-                    { 2, new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9031), "admin", new DateTime(2024, 8, 18, 0, 4, 19, 370, DateTimeKind.Local).AddTicks(9033) }
+                    { 1, new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8253), "user", new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8312) },
+                    { 2, new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8317), "admin", new DateTime(2024, 8, 26, 17, 10, 9, 107, DateTimeKind.Local).AddTicks(8319) }
                 });
 
             migrationBuilder.CreateIndex(
