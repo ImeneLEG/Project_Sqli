@@ -38,51 +38,49 @@ const Feed = () => {
             });
     }, []);
 
-    useEffect(() => {
-        console.log("Selected category:", selectedCategory);
-        console.log("Selected region:", selectedRegion);
-        console.log("User ID:", userId); // Ajout de ce log
+useEffect(() => {
+    // Clear videos state when selectedCategory changes
+    setVideos([]);
 
-        if (selectedCategory === "Favorites" && userId) {
-            console.log("Fetching favorite videos...");
-            getUserFavoriteVideos(userId)
-                .then((data) => {
-                    setVideos(data);
-                    console.log("Favorite videos fetched successfully:", data);
-                })
-                .catch((error) => {
-                    console.error(`Error fetching favorite videos for user ${userId}:`, error);
-                });
-        } else if (selectedCategory === "History" && userId) {
-            console.log("Fetching watch history...");
-            HistoriqueService.getHistoryByUser(userId)
-                .then((data) => {
-                    // Map the data to match the structure expected by VideoCard
-                    const formattedData = data.map(item => ({
-                        videoId: item.video.videoId,
-                        title: item.video.title,
-                        thumbnail: item.video.thumbnail,
-                        channelTitle: item.video.channelTitle,
-                        // Add other necessary fields from the video object
-                    }));
-                    setVideos(formattedData);
-                    console.log("Watch history fetched and formatted successfully:", formattedData);
-                })
-                .catch((error) => {
-                    console.error(`Error fetching history for user ${userId}:`, error);
-                });
-        } else if (selectedCategory === "Home" && selectedRegion) {
-            console.log("Fetching trending videos...");
-            getTrendingVideos(selectedRegion)
-                .then((data) => {
-                    setVideos(data);
-                    console.log("Trending videos fetched successfully:", data);
-                })
-                .catch((error) => {
-                    console.error(`Error fetching trending videos for region ${selectedRegion}:`, error);
-                });
-        }
-    }, [selectedCategory, selectedRegion, userId]);
+    if (selectedCategory === "Favorites" && userId) {
+        // Fetch favorite videos
+        getUserFavoriteVideos(userId)
+            .then((data) => {
+                setVideos(data);
+                console.log("Favorite videos fetched successfully:", data);
+            })
+            .catch((error) => {
+                console.error(`Error fetching favorite videos for user ${userId}:`, error);
+            });
+    } else if (selectedCategory === "History" && userId) {
+        // Fetch watch history
+        HistoriqueService.getHistoryByUser(userId)
+            .then((data) => {
+                const formattedData = data.map(item => ({
+                    videoId: item.video.videoId,
+                    title: item.video.title,
+                    thumbnail: item.video.thumbnail,
+                    channelTitle: item.video.channelTitle,
+                }));
+                setVideos(formattedData);
+                console.log("Watch history fetched and formatted successfully:", formattedData);
+            })
+            .catch((error) => {
+                console.error(`Error fetching history for user ${userId}:`, error);
+            });
+    } else if (selectedCategory === "Home" && selectedRegion) {
+        // Fetch trending videos
+        getTrendingVideos(selectedRegion)
+            .then((data) => {
+                setVideos(data);
+                console.log("Trending videos fetched successfully:", data);
+            })
+            .catch((error) => {
+                console.error(`Error fetching trending videos for region ${selectedRegion}:`, error);
+            });
+    }
+}, [selectedCategory, selectedRegion, userId]);
+
 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
