@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardMedia, Typography, IconButton } from "@mui/material";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { Link } from "react-router-dom";
 import { CheckCircle, Favorite, FavoriteBorder } from "@mui/icons-material";
 
-const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites }) => {
+const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites, onRemoveVideoFromHistory, isHistory }) => {
     const [isFavorite, setIsFavorite] = useState(video.isFavorite || false);
+
     // Check if thumbnail exists and replace 'default' with 'hqdefault'
     const thumbnailUrl = video.thumbnail ? video.thumbnail.replace("default", "hqdefault") : '';
 
@@ -13,15 +15,16 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
     }, [video.isFavorite]);
 
     const handleFavoriteClick = () => {
-        console.log("Favorite icon clicked. Current state:", isFavorite);
         if (isFavorite) {
-            console.log("Removing from favorites:", video.videoId);
             onRemoveFromFavorites(video.videoId);
         } else {
-            console.log("Adding to favorites:", video.videoId);
             onAddToFavorites(video.videoId);
         }
         setIsFavorite(!isFavorite);
+    };
+
+    const handleDeleteClick = () => {
+        onRemoveVideoFromHistory(video.videoId);
     };
 
     return (
@@ -72,12 +75,26 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
                         <CheckCircle sx={{ fontSize: "15px", marginLeft: "5px" }} />
                     </Typography>
                 )}
+                {isHistory && onRemoveVideoFromHistory && (
+                    <IconButton
+                        onClick={handleDeleteClick}
+                        sx={{
+                            position: "absolute",
+                            bottom: "10px", // Adjusts the vertical positioning
+                            right: "50px", // Adjust this value to make sure it's in front of the heart icon
+                            color: "red",
+                            zIndex: 10, // Ensures the delete icon is on top of other elements
+                        }}
+                    >
+                        <DeleteOutlineIcon />
+                    </IconButton>
+                )}
                 <IconButton
                     onClick={handleFavoriteClick}
                     sx={{
                         position: "absolute",
                         bottom: "10px",
-                        right: "10px",
+                        right: isHistory ? "10px" : "50px", // Adjust positioning based on presence of delete icon
                         backgroundColor: "rgba(255, 255, 255, 0.8)",
                         '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' },
                         color: isFavorite ? 'red' : 'gray',
