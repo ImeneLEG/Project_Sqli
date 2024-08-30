@@ -48,6 +48,15 @@ const Feed = () => {
             .then((data) => {
                 setRegions(data);
                 console.log("Regions fetched successfully:", data);
+
+                // Récupérer la région par défaut depuis le localStorage
+                const defaultRegion = localStorage.getItem('defaultRegion');
+                console.log('Région par défaut récupérée:', defaultRegion);
+
+                // Si une région par défaut est stockée, la sélectionner
+                if (defaultRegion) {
+                    setSelectedRegion(defaultRegion);
+                }
             })
             .catch((error) => {
                 console.error("Error fetching regions:", error);
@@ -58,7 +67,14 @@ const Feed = () => {
             .then((data) => {
                 setUserId(data.userId);
                 console.log("Current user fetched successfully:", data);
-            })
+
+                if (user.country) {
+                    setSelectedRegion(user.country);
+                    console.log('Région de l\'utilisateur:', user.country);
+                } // Appliquer la région de l'utilisateur connecté
+
+
+                })
             .catch((error) => {
                 console.error("Error fetching current user:", error);
             });
