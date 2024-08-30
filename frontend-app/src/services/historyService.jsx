@@ -9,7 +9,7 @@ const HistoriqueService = {
             const response = await axios.get(`${API_URL}/user/${userId}`);
             return response.data;
         } catch (error) {
-            console.error("Error fetching history:", error);
+            console.error("Error fetcahing history:", error);
             throw error;
         }
     },

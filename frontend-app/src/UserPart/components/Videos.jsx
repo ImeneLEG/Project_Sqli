@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 import VideoCard from "./VideoCard";
 
-const Videos = ({ videos, sidebarOpen, direction, onAddToFavorites, onRemoveFromFavorites }) => {
+const Videos = ({ videos, sidebarOpen, direction, onAddToFavorites, onRemoveFromFavorites ,onRemoveVideoFromHistory,isHistory}) => {
     console.log("Videos received:", videos); // Ajout de ce log
     if (!videos || videos.length === 0) {
         return (
@@ -41,8 +41,14 @@ const Videos = ({ videos, sidebarOpen, direction, onAddToFavorites, onRemoveFrom
                             sidebarOpen={sidebarOpen}
                             onAddToFavorites={onAddToFavorites}
                             onRemoveFromFavorites={onRemoveFromFavorites}
+                            onRemoveVideoFromHistory={onRemoveVideoFromHistory}
+                            isHistory={isHistory}
+
                         />
-                    )}
+
+
+
+    )}
                 </Box>
             ))}
         </Stack>

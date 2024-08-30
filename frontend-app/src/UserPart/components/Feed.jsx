@@ -7,7 +7,7 @@ import { getCurrentUser } from "../../services/authService";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const Feed = () => {
-    const [selectedCategory, setSelectedCategory] = useState("New");
+    const [selectedCategory, setSelectedCategory] = useState("Home");
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [videos, setVideos] = useState([]);
     const [regions, setRegions] = useState([]);
@@ -15,7 +15,33 @@ const Feed = () => {
     const [selectedRegion, setSelectedRegion] = useState("");
     const [selectedRegionName, setSelectedRegionName] = useState("");
     const [userId, setUserId] = useState(null);
+    const [historyActionLoading, setHistoryActionLoading] = useState(false);
 
+
+//clear history logic
+    const handleRemoveVideoFromHistory = async (videoId) => {
+        if (!userId) return;
+        try {
+            await HistoriqueService.removeVideoFromHistory(userId, videoId);
+            setVideos((prevVideos) => prevVideos.filter(video => video.videoId !== videoId));
+        } catch (error) {
+            console.error("Error removing video from history:", error);
+        }
+    };
+
+    const handleClearHistory = async () => {
+        if (!userId) return;
+        try {
+            await HistoriqueService.clearHistory(userId);
+            setVideos([]);
+        } catch (error) {
+            console.error("Error clearing history:", error);
+        }
+    };
+
+
+
+//logic of history and favories and  imene and hajar
     useEffect(() => {
         console.log("Fetching regions...");
         getRegions()
@@ -61,7 +87,7 @@ const Feed = () => {
                     const formattedData = data.map(item => ({
                         videoId: item.video.videoId,
                         title: item.video.title,
-                        thumbnail: item.video.thumbnail,
+                       thumbnail: item.video.thumbnail,
                         channelTitle: item.video.channelTitle,
                         // Add other necessary fields from the video object
                     }));
@@ -188,7 +214,11 @@ const Feed = () => {
                                     Trending <span style={{ color: "red" }}>{regions.find(region => region.item1 === selectedRegion)?.item2}</span> Videos
                                 </>}
                     </Typography>
-
+                    {selectedCategory === "History" && (
+                        <Button variant="contained" color="error" onClick={handleClearHistory}>
+                            Clear All History
+                        </Button>
+                    )}
                     {selectedCategory !== "Favorites" && selectedCategory !== "History" && (
                         <Box>
                             <Button
@@ -232,6 +262,9 @@ const Feed = () => {
                         onAddToFavorites={handleAddToFavorites}
                         onRemoveFromFavorites={handleRemoveFromFavorites}
                         onWatchVideo={handleWatchVideo}
+                        onRemoveVideoFromHistory={handleRemoveVideoFromHistory} // Pass this handler to Videos
+                        onClearHistory={handleClearHistory} // Pass this handler to Videos
+                        isHistory={selectedCategory === "History"}
                     />
                 ) : (
                     <Typography variant="h5" color="white">
