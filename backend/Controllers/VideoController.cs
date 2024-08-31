@@ -108,7 +108,7 @@ namespace Projet_Sqli.Controllers
                 }
 
                 // Appel du service pour obtenir les vidéos les plus regardées par pays
-                var mostViewedVideos = await _videoServices.GetMostViewedVideosByCountryAsync(topX, countryCode);
+                var mostViewedVideos = await _videoServices.GetTopVideosByCountryAsync(topX, countryCode);
 
                 return Ok(mostViewedVideos);
             }
