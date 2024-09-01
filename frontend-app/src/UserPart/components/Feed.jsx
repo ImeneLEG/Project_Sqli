@@ -92,12 +92,16 @@ const Feed = () => {
             console.log("Fetching favorite videos...");
             getUserFavoriteVideos(userId)
                 .then((data) => {
-                    setVideos(data);
-                    console.log("Favorite videos fetched successfully:", data);
+                    // Ensure each video has isFavorite set to true
+                    const favoriteVideos = data.map(video => ({
+                        ...video,
+                        isFavorite: true
+                    }));
+                    setVideos(favoriteVideos);
+                    console.log("Favorite videos fetched successfully:", favoriteVideos);
                 })
                 .catch((error) => {
-                    console.error(`Error fetching favorite videos for user ${userId}:`, error);
-                });
+                    console.error(`Error fetching favorite videos for user ${userId}:`, error);});
         } else if (selectedCategory === "History" && userId) {
             console.log("Fetching watch history...");
             HistoriqueService.getHistoryByUser(userId)
