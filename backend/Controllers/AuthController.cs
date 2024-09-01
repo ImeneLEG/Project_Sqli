@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
+using Projet_Sqli.Services;
 
 namespace Projet_Sqli.Controllers
 {
@@ -22,11 +23,14 @@ namespace Projet_Sqli.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly UserService _userService;
 
-        public AuthController(ApplicationDbContext context , IConfiguration configuration)
+        public AuthController(ApplicationDbContext context , IConfiguration configuration, UserService userService)
         {
             _context = context;
             _configuration = configuration;
+            _userService = userService;
+            _userService = userService;
         }
 
 
@@ -239,7 +243,60 @@ namespace Projet_Sqli.Controllers
             return Unauthorized();
         }
 
+        [HttpPut("update")]
+        // [Authorize(Roles = "Admin")] // Autoriser seulement pour admin
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
+        {
+            // Rechercher l'utilisateur par ID
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé.");
+            }
 
+            // Mise à jour des champs de l'utilisateur
+            user.Username = updateUserDto.Username ?? user.Username;
+            user.Email = updateUserDto.Email ?? user.Email;
+            user.Country = updateUserDto.Country ?? user.Country;
+
+            if (!string.IsNullOrEmpty(updateUserDto.Password))
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(updateUserDto.Password);
+            }
+
+            user.UpdatedAt = DateTime.UtcNow;
+
+            // Sauvegarder les modifications dans la base de données
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Utilisateur mis à jour avec succès." });
+        }
+
+        // Méthode pour supprimer un utilisateur
+        [HttpDelete("delete/{id}")]
+        //[Authorize] // Autoriser seulement les utilisateurs connectés
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            // Rechercher l'utilisateur par ID
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound("Utilisateur non trouvé.");
+            }
+
+            // Supprimer l'utilisateur de la base de données
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Utilisateur supprimé avec succès." });
+        }
+
+        [HttpGet("stats/{year}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<MonthlyUserStats>>> GetMonthlyUserStats(int year)
+        {
+            var stats = await _userService.GetMonthlyUserStatsAsync(year);
+            return Ok(stats);
+        }
 
 
 
