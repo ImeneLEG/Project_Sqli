@@ -290,6 +290,13 @@ namespace Projet_Sqli.Controllers
             return Ok(new { message = "Utilisateur supprimé avec succès." });
         }
 
+        [HttpGet("users")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsersAsync();
+            return Ok(users);
+        }
+
         [HttpGet("stats/{year}")]
         //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<MonthlyUserStats>>> GetMonthlyUserStats(int year)
