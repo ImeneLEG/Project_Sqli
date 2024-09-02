@@ -90,6 +90,12 @@ export default function SignUp() {
     setShowPassword(!showPassword);
   };
 
+// Check if email ends with '@gmail.com'
+  const isValidEmail = (email) => {
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    return gmailRegex.test(email);
+  };
+
   // Fonction pour valider le mot de passe
   const validatePassword = (password) => {
     const hasUpperCase = /[A-Z]/.test(password);
@@ -99,12 +105,30 @@ export default function SignUp() {
     return hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar;
   };
 
+
+
+
+
   // Fonction pour gérer la soumission du formulaire
   const handleSubmit = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const password = data.get('password');
 
+
+    const email = data.get('email'); // cette ligne pour récupérer l'email
+    
+
+    if(data.get('firstName')=='' || email=='' || password=='' || data.get('country')==''){
+      setErrorMessage('Please complete filling in all the fields.');
+      return;
+    }
+
+    // Validate email
+    if (!isValidEmail(email)) {
+      setErrorMessage('Please enter a valid Gmail address.');
+      return;
+    }
     // Validation du mot de passe
     if (!validatePassword(password)) {
       setErrorMessage('Password must contain at least one number, one special character, one lowercase letter, and one uppercase letter.');
@@ -114,7 +138,7 @@ export default function SignUp() {
     // Créer l'objet à envoyer au backend
     const userData = {
       Username: data.get('firstName'),
-      Email: data.get('email'),
+      Email: email,
       Password: password,
       Country: selectedRegion, // Utiliser la région sélectionnée
       Role: {

@@ -8,13 +8,15 @@ import SignUp from './Authentification/SignUp/SignUp';
 import Admin from './AdminPart/Admin';
 import LandingPage from './LandingPage/LandingPage';
 import ProtectedRoute from './UserPart/components/ProtectedRoute';
+import ResetPassword from './Authentification/Login/ResetPassword';
+import Sendemail from './Authentification/Login/Sendemail';
 
 
 const AppWrapper = () => {
   const location = useLocation();
 
   // Check if the current path is login or signUp
-  const shouldShowLayout = location.pathname !== '/' && location.pathname !== '/signup' && location.pathname !== '/admin' && location.pathname !== '/welcome' && location.pathname !== '/login';
+  const shouldShowLayout = !['/', '/signup', '/admin', '/welcome', '/login', '/send-email'].includes(location.pathname) && !location.pathname.startsWith('/reset-password');
 
   return (
     <>
@@ -39,6 +41,8 @@ const AppWrapper = () => {
           <Route path='/signup' exact element={<SignUp />} />
           <Route path='/admin' exact element={<Admin />} />
           <Route path='/welcome' exact element={<LandingPage />}/>
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/send-email" element={<Sendemail />} />
         </Routes>
       )}
     </>
