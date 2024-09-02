@@ -10,13 +10,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../services/authService';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
+
 import Alert from '@mui/material/Alert';
 import logo from '../../UserPart/components/logo.svg';
+import axios from 'axios'; // Import Axios
 
 function Copyright(props) {
   return (
@@ -52,10 +49,11 @@ const theme = createTheme({
   },
 });
 
-export default function Login() {
+export default function Sendemail() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
+  const [successMessage, setSuccessMessage] = React.useState(''); // State for success message
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -69,32 +67,22 @@ export default function Login() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    const userData = {
-      Email: data.get('email'),
-      Password: data.get('password'),
-    };
+    const email = data.get('email'); // Get the email from the form data
 
     try {
-      const response = await login(userData);
+      // Make the API call to the backend to request a password reset
+      const response = await axios.post('https://localhost:7275/api/auth/request-reset-password', {
+        email: email,
+      });
+
       console.log('Success:', response);
+      setSuccessMessage('An email for password reset has been sent.'); // Set success message
+      setErrorMessage(''); // Clear error message
 
-      if (response.status === 200) {
-        const token = response.data.token; // Récupère le token JWT de la réponse
-        localStorage.setItem('token', token); // Stocke le JWT dans le stockage local
-
-        const userId = response.data.user.id; // Récupère l'ID de l'utilisateur
-        const userRole = response.data.user.role.name; // Utilisation de la clé correcte pour le rôle
-        if (userRole === 'user') {
-          navigate(`/trendingVideos/${userId}`);
-        } else if (userRole === 'admin') {
-          navigate('/admin');
-        }
-      } else {
-        setErrorMessage('Login failed. Please check your email and password.');
-      }
     } catch (error) {
       console.error('Error:', error);
-      setErrorMessage('Email or password not correct. Please try again later.');
+      setErrorMessage('Failed to send password reset email. Please try again later.');
+      setSuccessMessage(''); // Clear success message
     }
   };
 
@@ -116,16 +104,21 @@ export default function Login() {
             style={{ width: 50, height: 50, marginBottom: 8 }}
           />
           <Typography component="h1" variant="h5">
-            Login to TrendyTube
+            Reset Password
           </Typography>
-          {errorMessage && (
+          {successMessage && ( // Display success message
+            <Alert severity="success" sx={{ mt: 2, width: '100%' }}>
+              {successMessage}
+            </Alert>
+          )}
+          {errorMessage && ( // Display error message
             <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
               {errorMessage}
             </Alert>
           )}
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
+            <Grid container spacing={1}>
+              <Grid item xs={20}>
                 <TextField
                   required
                   fullWidth
@@ -135,55 +128,34 @@ export default function Login() {
                   autoComplete="email"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
+
+              <Grid item xs={20}>
+                <Button
+                  type="submit"
                   fullWidth
-                  name="password"
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  autoComplete="new-password"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Send Email
+                </Button>
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              LogIn
-            </Button>
+            
             <Grid container>
               <Grid item xs>
-                <Link href="/send-email" variant="body2">
+                <Link href="/send-email" variant="body2" sx={{ display: 'none' }}>
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/signup" variant="body2">
+                <Link href="/signup" variant="body2" sx={{ display: 'none' }}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <Copyright sx={{ display: 'none' }} />
       </Container>
     </ThemeProvider>
   );
