@@ -30,11 +30,13 @@ namespace Projet_Sqli.Controllers
 
             if (favoriteVideos == null || !favoriteVideos.Any())
             {
-                return NotFound(new { Message = "No favorite videos found for this user." });
+                // Instead of returning NotFound, return an empty array with a 200 status
+                return Ok(new List<object>());
             }
 
             return Ok(favoriteVideos);
         }
+
 
 
 

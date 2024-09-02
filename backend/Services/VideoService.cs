@@ -169,27 +169,40 @@ namespace Projet_Sqli.Services
         }
 
 
-
         // Les vidéos les plus regardées par pays
-        public async Task<Dictionary<string, Videos>> GetMostViewedVideosByCountryAsync()
+        public async Task<List<Videos>> GetTopVideosByCountryAsync(int topX, string countryCode)
         {
-            var result = new Dictionary<string, Videos>();
-
-            foreach (var country in countries)
+            try
             {
-                var mostViewedVideo = await _dbContext.Videos
-                    //.Where(v => v.TrendingRanks == country.Item1) // TrendingRanks doit contenir le code pays et aussi etre de format string
-                    //.OrderByDescending(v => long.Parse(v.Views))
-                    .FirstOrDefaultAsync();
+                if (topX <= 0 || string.IsNullOrEmpty(countryCode))
+                    throw new ArgumentException("Invalid parameters");
 
-                if (mostViewedVideo != null)
-                {
-                    result.Add(country.Item2, mostViewedVideo);
-                }
+                // Fetch trending videos from the API
+                var trendingVideos = await GetTrendingVideosAsync(countryCode);
+
+                // Get the top X videos from the trending videos
+                var TopVideos = trendingVideos
+                    .OrderBy(v => v.TrendingRanks
+                        .SelectMany(tr => tr.Value)
+                        .Where(kvp => kvp.Key == countryCode)
+                        .Select(kvp => kvp.Value)
+                        .DefaultIfEmpty(0)
+                        .Max())
+                    .Take(topX)
+                    .ToList();
+
+                return TopVideos;
             }
-
-            return result;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching most viewed videos by country");
+                throw; // Re-throw the exception for further handling
+            }
         }
+
+
+
+
 
         //récuperation des videos par id 
         public async Task<Videos> GetVideoByIdAsync(string videoId)
