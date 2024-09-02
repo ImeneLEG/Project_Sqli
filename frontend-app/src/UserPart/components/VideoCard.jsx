@@ -18,9 +18,7 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
             onRemoveFromFavorites(video.videoId);
         } else {
             onAddToFavorites(video.videoId);
-            setIsFavorite(true)
         }
-        setIsFavorite(!isFavorite);
     };
 
     // Handle delete action from history
@@ -85,10 +83,10 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
                         onClick={handleDeleteClick}
                         sx={{
                             position: "absolute",
-                            bottom: "10px", // Adjusts the vertical positioning
-                            right: "50px", // Adjust this value to make sure it's in front of the heart icon
+                            bottom: "10px", 
+                            right: "50px", 
                             color: "red",
-                            zIndex: 10, // Ensures the delete icon is on top of other elements
+                            zIndex: 10, 
                         }}
                     >
                         <DeleteOutlineIcon />

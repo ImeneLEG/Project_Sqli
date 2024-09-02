@@ -41,7 +41,7 @@ const Feed = () => {
 
 
 
-//logic of history and favories and  imene and hajar
+//logic of history and favories 
     useEffect(() => {
         console.log("Fetching regions...");
         getRegions()
@@ -89,11 +89,9 @@ const Feed = () => {
         setVideos([]);
     
         if (selectedCategory === "Favorites" && userId) {
-            console.log("Fetching favorite videos...");
             getUserFavoriteVideos(userId)
                 .then((data) => {
-                    setVideos(data);
-                    console.log("Favorite videos fetched successfully:", data);
+                    setVideos(data.map(video => ({ ...video, isFavorite: true })));
                 })
                 .catch((error) => {
                     console.error(`Error fetching favorite videos for user ${userId}:`, error);
@@ -155,10 +153,14 @@ const Feed = () => {
         try {
             console.log("Adding video to favorites:", videoId);
             await addToFavorites(userId, videoId);
-            // Update the video in state to reflect it as a favorite
-            setVideos(prevVideos => prevVideos.map(video =>
-                video.videoId === videoId ? { ...video, isFavorite: true } : video
-            ));
+            // Update videos state to reflect the new favorite
+            setVideos((prevVideos) =>
+                prevVideos.map(video =>
+                    video.videoId === videoId
+                    ? { ...video, isFavorite: true } 
+                    : video
+                )
+            );
             console.log("Video added to favorites successfully:", videoId);
         } catch (error) {
             console.error("Error adding video to favorites:", error);
@@ -170,15 +172,22 @@ const Feed = () => {
         try {
             console.log("Removing video from favorites:", videoId);
             await removeFromFavorites(userId, videoId);
-            // Update the video in state to reflect it as not a favorite
-            setVideos(prevVideos => prevVideos.map(video =>
-                video.videoId === videoId ? { ...video, isFavorite: false } : video
-            ));
+            // Update videos state to reflect the removed favorite
+            setVideos((prevVideos) =>
+                prevVideos.map(video =>
+                    video.videoId === videoId
+                    ? { ...video, isFavorite: false } 
+                    : video
+                )
+                .filter(video => video.videoId !== videoId) 
+            );
             console.log("Video removed from favorites successfully:", videoId);
         } catch (error) {
             console.error("Error removing video from favorites:", error);
         }
     };
+    
+    
     
 
     const handleWatchVideo = async (videoId) => {
@@ -288,8 +297,8 @@ const Feed = () => {
                         onAddToFavorites={handleAddToFavorites}
                         onRemoveFromFavorites={handleRemoveFromFavorites}
                         onWatchVideo={handleWatchVideo}
-                        onRemoveVideoFromHistory={handleRemoveVideoFromHistory} // Pass this handler to Videos
-                        onClearHistory={handleClearHistory} // Pass this handler to Videos
+                        onRemoveVideoFromHistory={handleRemoveVideoFromHistory} 
+                        onClearHistory={handleClearHistory} 
                         isHistory={selectedCategory === "History"}
                     />
                 ) : (
