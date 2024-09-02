@@ -16,6 +16,14 @@ namespace Projet_Sqli.Services
         {
             _context = context;
         }
+        public async Task<bool> IsVideoInHistoryAsync(int userId, string videoId)
+        {
+            // Implémentez la logique pour vérifier si la vidéo est déjà dans l'historique de l'utilisateur
+            var historique = await _context.Historiques
+                .FirstOrDefaultAsync(h => h.UserId == userId && h.VideoId == videoId);
+
+            return historique != null;
+        }
 
 
         // Méthode pour supprimer une vidéo spécifique de l'historique d'un utilisateur

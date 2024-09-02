@@ -13,6 +13,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Identity.Data;
+using Projet_Sqli.Services;
+using System.Net.Mail;
+using System.Net;
 
 namespace Projet_Sqli.Controllers
 {
@@ -22,11 +26,12 @@ namespace Projet_Sqli.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
-
+       
         public AuthController(ApplicationDbContext context , IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
+           
         }
 
 
@@ -235,7 +240,117 @@ namespace Projet_Sqli.Controllers
                 });
             }
 
+            Console.WriteLine("User is not authenticated or missing claims.");
             return Unauthorized();
         }
-       }
+
+
+
+
+        // Méthode de demande de réinitialisation de mot de passe
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            // Trouver le jeton dans la base de données
+            var resetToken = await _context.ResetPasswordTokens
+                .Include(rt => rt.User)
+                .FirstOrDefaultAsync(rt => rt.Token == resetPasswordDto.Token);
+
+            if (resetToken == null || resetToken.ExpiresAt < DateTime.UtcNow)
+            {
+                return BadRequest("Le lien de réinitialisation est invalide ou a expiré.");
+            }
+
+            // Trouver l'utilisateur associé au jeton
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == resetToken.UserId);
+            if (user == null)
+            {
+                return BadRequest("Utilisateur non trouvé.");
+            }
+
+            // Mettre à jour le mot de passe de l'utilisateur
+            user.Password = BCrypt.Net.BCrypt.HashPassword(resetPasswordDto.NewPassword);
+            _context.Users.Update(user);
+
+            // Supprimer le jeton après utilisation
+            _context.ResetPasswordTokens.Remove(resetToken);
+
+            // Enregistrer les modifications
+            await _context.SaveChangesAsync();
+
+            return Ok("Le mot de passe a été réinitialisé avec succès.");
+        }
+
+
+        [HttpPost("request-reset-password")]
+        public async Task<IActionResult> RequestResetPassword([FromBody] ResetPasswordRequestDto requestDto)
+        {
+            // Vérifiez si l'utilisateur avec l'email existe
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == requestDto.Email);
+            if (user == null)
+            {
+                // Pour des raisons de sécurité, ne révélez pas si l'utilisateur n'existe pas
+                return BadRequest("Si un compte evc cet email exsite , vous reveverez un lien de réinitialisation");
+            }
+
+            // Générez un jeton de réinitialisation
+            var resetToken = Guid.NewGuid().ToString();
+            var resetPasswordToken = new ResetPasswordToken
+            {
+                UserId = user.Id,
+                Token = resetToken,
+                ExpiresAt = DateTime.UtcNow.AddHours(1) // Expiration dans 1 heure
+            };
+
+            // Enregistrez le jeton dans la base de données
+            _context.ResetPasswordTokens.Add(resetPasswordToken);
+            await _context.SaveChangesAsync();
+
+            // Envoyez un email avec le lien de réinitialisation
+            await SendResetPasswordEmail(user.Email, resetToken);
+
+            return Ok("Un email de réinitialisation de mot de passe a été envoyé.");
+        }
+
+
+
+
+        private async Task SendResetPasswordEmail(string email, string resetToken)
+        {
+            try
+            {
+                var resetLink = $"http://localhost:5173/reset-password/{resetToken}?email={email}";
+                var emailBody = $"Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe : {resetLink}";
+
+                using (var client = new SmtpClient("smtp.gmail.com"))
+                {
+                    client.Port = 587;
+                    client.Credentials = new NetworkCredential("your-email@gmail.com", "password-specifique a l app et assurer d avoir la validation en deux facteurs activée"); // Utilisez un mot de passe spécifique à l'application
+                    client.EnableSsl = true;
+
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress("nadia.azam.2002@gmail.com"),
+                        Subject = "Réinitialisation de votre mot de passe",
+                        Body = emailBody,
+                        IsBodyHtml = false,
+                    };
+
+                    mailMessage.To.Add(email);
+
+                    await client.SendMailAsync(mailMessage);
+                }
+            }
+            catch (SmtpException ex)
+            {
+                // Log detailed SMTP exception
+                Console.WriteLine($"SMTP Error: {ex.Message}");
+                Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");
+                throw; // Optionally rethrow or handle accordingly
+            }
+        }
+
+
+
+    }
 }

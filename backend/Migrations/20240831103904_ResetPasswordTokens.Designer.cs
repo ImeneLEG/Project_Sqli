@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projet_Sqli.Data;
 
@@ -11,9 +12,11 @@ using Projet_Sqli.Data;
 namespace Projet_Sqli.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240831103904_ResetPasswordTokens")]
+    partial class ResetPasswordTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,31 +89,6 @@ namespace Projet_Sqli.Migrations
                     b.ToTable("Historiques");
                 });
 
-            modelBuilder.Entity("Projet_Sqli.Entities.ResetPasswordToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ResetPasswordTokens");
-                });
-
             modelBuilder.Entity("Projet_Sqli.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -137,16 +115,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 31, 11, 55, 8, 402, DateTimeKind.Local).AddTicks(1169),
+                            CreatedAt = new DateTime(2024, 8, 31, 11, 39, 3, 205, DateTimeKind.Local).AddTicks(1714),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 31, 11, 55, 8, 402, DateTimeKind.Local).AddTicks(1247)
+                            UpdatedAt = new DateTime(2024, 8, 31, 11, 39, 3, 205, DateTimeKind.Local).AddTicks(1772)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 31, 11, 55, 8, 402, DateTimeKind.Local).AddTicks(1253),
+                            CreatedAt = new DateTime(2024, 8, 31, 11, 39, 3, 205, DateTimeKind.Local).AddTicks(1777),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 31, 11, 55, 8, 402, DateTimeKind.Local).AddTicks(1258)
+                            UpdatedAt = new DateTime(2024, 8, 31, 11, 39, 3, 205, DateTimeKind.Local).AddTicks(1779)
                         });
                 });
 
@@ -284,17 +262,6 @@ namespace Projet_Sqli.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Video");
-                });
-
-            modelBuilder.Entity("Projet_Sqli.Entities.ResetPasswordToken", b =>
-                {
-                    b.HasOne("Projet_Sqli.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Projet_Sqli.Entities.User", b =>

@@ -18,6 +18,8 @@ namespace Projet_Sqli.Data
         public DbSet<Videos> Videos { get; set; }
         public DbSet<Favoris> Favoris { get; set; }
 
+        public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; } // Ajoutez cette ligne
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
