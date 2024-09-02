@@ -139,23 +139,31 @@ const Feed = () => {
         try {
             console.log("Adding video to favorites:", videoId);
             await addToFavorites(userId, videoId);
+            // Update the video in state to reflect it as a favorite
+            setVideos(prevVideos => prevVideos.map(video =>
+                video.videoId === videoId ? { ...video, isFavorite: true } : video
+            ));
             console.log("Video added to favorites successfully:", videoId);
         } catch (error) {
             console.error("Error adding video to favorites:", error);
         }
     };
-
+    
     const handleRemoveFromFavorites = async (videoId) => {
         if (!userId) return;
         try {
             console.log("Removing video from favorites:", videoId);
             await removeFromFavorites(userId, videoId);
-            setVideos((prevVideos) => prevVideos.filter(video => video.videoId !== videoId));
+            // Update the video in state to reflect it as not a favorite
+            setVideos(prevVideos => prevVideos.map(video =>
+                video.videoId === videoId ? { ...video, isFavorite: false } : video
+            ));
             console.log("Video removed from favorites successfully:", videoId);
         } catch (error) {
             console.error("Error removing video from favorites:", error);
         }
     };
+    
 
     const handleWatchVideo = async (videoId) => {
         if (!userId) return;
