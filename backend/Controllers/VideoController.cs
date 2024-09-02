@@ -12,6 +12,7 @@ namespace Projet_Sqli.Controllers
         private readonly HistoriqueService _historiqueService;
         private readonly VideoRetrievalService _videoRetrievalService;
 
+
         public VideosController(VideoServices videoService, HistoriqueService historiqueService, VideoRetrievalService videoRetrievalService)
         {
             _videoServices = videoService;
@@ -119,15 +120,8 @@ namespace Projet_Sqli.Controllers
 
         }
 
+        
 
-
-        //recuperation des region pour les selectionner en front
-        [HttpGet("regions")]
-        public IActionResult GetRegions()
-        {
-            var regions = _videoServices.GetRegions();
-            return Ok(regions);
-        }
 
 
     }

@@ -54,18 +54,37 @@ namespace Projet_Sqli.Services
             _logger = logger;
 
         }
+
+
         public async Task<List<Videos>> GetTrendingVideosAsync(string regionCode)
         {
-
             // Check if the region code is valid
             if (!countries.Any(c => c.Item1.Equals(regionCode, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new ArgumentException("Invalid region code");
             }
 
-            var requestUrl = $"https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&chart=mostPopular&maxResults=20&regionCode={regionCode}&key={_apiKey}";
-            _logger.LogInformation($"Request URL: {requestUrl}"); // Log the URL
+            // Check if today's videos for the specified region are already in the database 
 
+            _logger.LogInformation("Checking if videos are in the database...");
+
+            var today = DateTime.Now.ToString("yyyy-MM-dd");
+
+            var allVideos = await _dbContext.Videos.ToListAsync();
+
+            var existingVideos = allVideos
+                .Where(v => v.TrendingRanks.ContainsKey(today) && v.TrendingRanks[today].ContainsKey(regionCode))
+                .ToList();
+
+            if (existingVideos.Count >= 20)
+            {
+                _logger.LogInformation($"Returning {existingVideos.Count} videos from the database for region {regionCode}.");
+                return existingVideos;
+            }
+
+            // Otherwise, make an API call to fetch trending videos
+            var requestUrl = $"https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&chart=mostPopular&maxResults=20&regionCode={regionCode}&key={_apiKey}";
+            _logger.LogInformation($"Request URL: {requestUrl}"); 
 
             var response = await _httpClient.GetStringAsync(requestUrl);
             var jsonResponse = JObject.Parse(response);
@@ -81,7 +100,6 @@ namespace Projet_Sqli.Services
                     if (item != null)
                     {
                         var videoId = item["id"]?.ToString() ?? string.Empty;
-                       
 
                         // Check if the video already exists in the database
                         var existingVideo = await _dbContext.Videos
@@ -91,7 +109,6 @@ namespace Projet_Sqli.Services
                         {
                             var video = new Videos
                             {
-                                
                                 VideoId = videoId,
                                 Title = item["snippet"]?["title"]?.ToString() ?? string.Empty,
                                 Description = item["snippet"]?["description"]?.ToString() ?? string.Empty,
@@ -105,7 +122,7 @@ namespace Projet_Sqli.Services
                                 Duration = ParseDuration(item["contentDetails"]?["duration"]?.ToString() ?? string.Empty),
                                 ChannelId = item["snippet"]?["channelId"]?.ToString() ?? string.Empty,
                                 ChannelTitle = item["snippet"]?["channelTitle"]?.ToString() ?? string.Empty,
-                                TrendingRanks = new Dictionary<string, Dictionary<string, int>>(),  // Initialiser sans classement
+                                TrendingRanks = new Dictionary<string, Dictionary<string, int>>(),
                                 CreatedAt = DateTime.Now,
                                 UpdatedAt = DateTime.Now
                             };
@@ -125,10 +142,10 @@ namespace Projet_Sqli.Services
                         }
                         else
                         {
-                            // Générer la clé de date sous forme de chaîne
+                            // Generate the date key as a string
                             var dateKey = DateTime.Now.ToString("yyyy-MM-dd");
 
-                            // Vérifier si la clé de date existe déjà
+                            // Check if the date key already exists
                             if (!existingVideo.TrendingRanks.ContainsKey(dateKey))
                             {
                                 existingVideo.TrendingRanks[dateKey] = new Dictionary<string, int>();
@@ -149,6 +166,7 @@ namespace Projet_Sqli.Services
 
             return videos;
         }
+
 
         // Analyser la durée de la vidéo
 

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Projet_Sqli.Data
 {
@@ -44,36 +45,52 @@ namespace Projet_Sqli.Data
                 .Property(v => v.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // Configuration pour stocker les champs sous forme de JSON
+            // Value Comparers for JSON properties
+            var dictionaryDateTimeIntComparer = new ValueComparer<Dictionary<DateTime, int>>(
+                (d1, d2) => d1.SequenceEqual(d2),
+                d => d.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                d => d.ToDictionary(entry => entry.Key, entry => entry.Value)
+            );
+
+            var dictionaryStringDictionaryComparer = new ValueComparer<Dictionary<string, Dictionary<string, int>>>(
+                (d1, d2) => d1.SequenceEqual(d2),
+                d => d.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                d => d.ToDictionary(entry => entry.Key, entry => entry.Value.ToDictionary(inner => inner.Key, inner => inner.Value))
+            );
+
+            // Apply Value Comparers to Video properties
             modelBuilder.Entity<Videos>(entity =>
             {
                 entity.Property(e => e.Views)
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                         v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
-                    .HasColumnType("nvarchar(max)");
-
+                    .HasColumnType("nvarchar(max)")
+                    .Metadata.SetValueComparer(dictionaryDateTimeIntComparer);
 
                 entity.Property(e => e.Likes)
-                   .HasConversion(
-                       v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                       v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
-                   .HasColumnType("nvarchar(max)");
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                        v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
+                    .HasColumnType("nvarchar(max)")
+                    .Metadata.SetValueComparer(dictionaryDateTimeIntComparer);
 
                 entity.Property(e => e.Comments)
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                         v => JsonSerializer.Deserialize<Dictionary<DateTime, int>>(v, (JsonSerializerOptions)null))
-                    .HasColumnType("nvarchar(max)");
+                    .HasColumnType("nvarchar(max)")
+                    .Metadata.SetValueComparer(dictionaryDateTimeIntComparer);
 
                 entity.Property(e => e.TrendingRanks)
-                .HasConversion(
-                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                    v => JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, int>>>(v, (JsonSerializerOptions)null))
-                .HasColumnType("nvarchar(max)");
-
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                        v => JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, int>>>(v, (JsonSerializerOptions)null))
+                    .HasColumnType("nvarchar(max)")
+                    .Metadata.SetValueComparer(dictionaryStringDictionaryComparer);
             });
 
+ 
             // Configuration pour l'entité Historique
             modelBuilder.Entity<Historique>()
                 .Property(h => h.ViewedAt)
