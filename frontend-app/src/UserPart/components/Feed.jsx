@@ -261,7 +261,7 @@ const Feed = () => {
                         variant="body2"
                         sx={{ mt: 1.5, color: "#fff", display: { xs: "none", md: "block" } }}
                     >
-                        Copyright-2024
+                        Copyright © TrendyTube 2024
                     </Typography>
                 </Box>
             )}
