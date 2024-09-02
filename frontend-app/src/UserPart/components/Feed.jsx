@@ -374,7 +374,7 @@ const Feed = () => {
                 <DialogActions>
                     <Button
                         onClick={handleConfirmDialogClose}
-                        sx={{ backgroundColor: 'white', color: 'red', borderColor: 'white', '&:hover': { backgroundColor: 'transparent',borderColor: 'red' } }}
+                        sx={{ backgroundColor: 'white', color: 'red', borderColor: 'white', '&:hover': { backgroundColor: '#D9D9D9',borderColor: 'red' } }}
                         variant="outlined"
                     >
                         Cancel
