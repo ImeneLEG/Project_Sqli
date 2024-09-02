@@ -87,7 +87,7 @@ export default function Login() {
         if (userRole === 'user') {
           navigate(`/trendingVideos/${userId}`);
         } else if (userRole === 'admin') {
-          navigate('/admin');
+          navigate('/admin-dashboard');
         }
       } else {
         setErrorMessage('Login failed. Please check your email and password.');

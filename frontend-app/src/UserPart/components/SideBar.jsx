@@ -3,7 +3,7 @@ import { Stack } from '@mui/material';
 import { categories } from '../utils/constants';
 import './SideBar.css';
 
-const SideBar = ({ selectedCategory, setSelectedCategory }) => (
+const SideBar = ({ selectedCategory, setSelectedCategory, isAdmin }) => (
     <Stack
         direction='row'
         sx={{
@@ -12,31 +12,33 @@ const SideBar = ({ selectedCategory, setSelectedCategory }) => (
             flexDirection: { md: 'column' }
         }}
     >
-        {categories.map((category) => (
-            <button
-                className='category-btn'
-                onClick={() => setSelectedCategory(category.name)} // Use the function here
-                style={{
-                    background: category.name === selectedCategory && '#fc1503',
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center'
-                }}
-                key={category.name}
-            >
-                <span
+        {categories
+            .filter(category => !category.adminOnly || isAdmin) // Filter for admin categories
+            .map((category) => (
+                <button
+                    className='category-btn'
+                    onClick={() => setSelectedCategory(category.name)}
                     style={{
-                        marginRight: '10px',
-                        color: category.name === selectedCategory ? 'white' : 'red'
+                        background: category.name === selectedCategory ? '#fc1503' : 'transparent',
+                        color: '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center'
                     }}
+                    key={category.name}
                 >
-                    {category.icon}
-                </span>
-                <span style={{ opacity: category.name === selectedCategory ? '1' : '0.8' }}>
-                    {category.name}
-                </span>
-            </button>
-        ))}
+                    <span
+                        style={{
+                            marginRight: '10px',
+                            color: category.name === selectedCategory ? 'white' : 'red'
+                        }}
+                    >
+                        {category.icon}
+                    </span>
+                    <span style={{ opacity: category.name === selectedCategory ? '1' : '0.8' }}>
+                        {category.name}
+                    </span>
+                </button>
+            ))}
     </Stack>
 );
 

@@ -40,11 +40,7 @@ const AppWrapper = () => {
           <Route path="/" exact element={<Login />} />
           <Route path="/login" exact element={<Login />} />
           <Route path="/signup" exact element={<SignUp />} />
-          <Route path='/admin' exact element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          } />
+          <Route path='/admin-dashboard' exact element={ <AdminDashboard />} />
           <Route path="/welcome" exact element={<LandingPage />} />
         </Routes>
       )}
