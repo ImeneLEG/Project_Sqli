@@ -6,7 +6,6 @@ import { CheckCircle, Favorite, FavoriteBorder } from "@mui/icons-material";
 
 const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites, onRemoveVideoFromHistory, isHistory }) => {
     const [isFavorite, setIsFavorite] = useState(video.isFavorite || false);
-
     // Check if thumbnail exists and replace 'default' with 'hqdefault'
     const thumbnailUrl = video.thumbnail ? video.thumbnail.replace("default", "hqdefault") : '';
 
@@ -26,6 +25,7 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
     const handleDeleteClick = () => {
         onRemoveVideoFromHistory(video.videoId);
     };
+
 
     return (
         <Card

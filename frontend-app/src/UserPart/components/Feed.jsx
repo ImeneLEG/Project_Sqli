@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Box, Stack, Typography, Button, Menu, MenuItem } from "@mui/material";
+import { Box, Stack, Typography, Button, Menu, MenuItem,Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { SideBar, Videos } from "./index";
 import { getTrendingVideos, getRegions, addToFavorites, removeFromFavorites, getUserFavoriteVideos, watchVideo } from "../../services/videoService";
 import HistoriqueService from "../../services/historyService";
 import { getCurrentUser } from "../../services/authService";
 import MenuIcon from "@mui/icons-material/Menu";
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle'; // Import for a more stylish icon
+
 
 const Feed = () => {
     const [selectedCategory, setSelectedCategory] = useState("Home");
@@ -16,6 +18,31 @@ const Feed = () => {
     const [selectedRegionName, setSelectedRegionName] = useState("");
     const [userId, setUserId] = useState(null);
     const [historyActionLoading, setHistoryActionLoading] = useState(false);
+
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [dialogActionType, setDialogActionType] = useState("");
+    const [selectedVideoId, setSelectedVideoId] = useState(null);
+
+    const handleConfirmDialogOpen = (actionType, videoId = null) => {
+        setDialogActionType(actionType);
+        setSelectedVideoId(videoId);
+        setConfirmDialogOpen(true);
+    };
+    const handleConfirmDialogClose = () => {
+        setConfirmDialogOpen(false);
+        setDialogActionType("");
+        setSelectedVideoId(null);
+    };
+    const handleConfirmAction = () => {
+        if (dialogActionType === "removeHistory") {
+            handleRemoveVideoFromHistory(selectedVideoId);
+        } else if (dialogActionType === "removeFavorite") {
+            handleRemoveFromFavorites(selectedVideoId);
+        } else if (dialogActionType === "clearHistory") {
+            handleClearHistory();
+        }
+        handleConfirmDialogClose();
+    };
 
 
 //clear history logic
@@ -68,26 +95,27 @@ const Feed = () => {
                 setUserId(data.userId);
                 console.log("Current user fetched successfully:", data);
 
-                if (user.country) {
-                    setSelectedRegion(user.country);
-                    console.log('Région de l\'utilisateur:', user.country);
+                if (data.country) {  // Correct the variable here
+                    setSelectedRegion(data.country);
+                    console.log('Région de l\'utilisateur:', data.country);  // And here
                 } // Appliquer la région de l'utilisateur connecté
-
-
-                })
+            })
             .catch((error) => {
                 console.error("Error fetching current user:", error);
             });
     }, []);
 
-    useEffect(() => {
+
+
+
+        useEffect(() => {
         console.log("Selected category:", selectedCategory);
         console.log("Selected region:", selectedRegion);
         console.log("User ID:", userId);
-    
+
         // Clear videos state when switching categories
         setVideos([]);
-    
+
         if (selectedCategory === "Favorites" && userId) {
             console.log("Fetching favorite videos...");
             getUserFavoriteVideos(userId)
@@ -130,7 +158,7 @@ const Feed = () => {
                 });
         }
     }, [selectedCategory, selectedRegion, userId]);
-    
+
 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
@@ -236,11 +264,12 @@ const Feed = () => {
                                     Trending <span style={{ color: "red" }}>{regions.find(region => region.item1 === selectedRegion)?.item2}</span> Videos
                                 </>}
                     </Typography>
-                    {selectedCategory === "History" && (
-                        <Button variant="contained" color="error" onClick={handleClearHistory}>
-                            Clear All History
+                    {selectedCategory === "History" && videos.length > 0 && (
+                        <Button variant="contained" color="error" onClick={() => handleConfirmDialogOpen("clearHistory")}>
+                            Clear History
                         </Button>
                     )}
+
                     {selectedCategory !== "Favorites" && selectedCategory !== "History" && (
                         <Box>
                             <Button
@@ -282,10 +311,9 @@ const Feed = () => {
                         videos={videos}
                         sidebarOpen={sidebarOpen}
                         onAddToFavorites={handleAddToFavorites}
-                        onRemoveFromFavorites={handleRemoveFromFavorites}
+                        onRemoveFromFavorites={(videoId) => handleConfirmDialogOpen("removeFavorite", videoId)}
                         onWatchVideo={handleWatchVideo}
-                        onRemoveVideoFromHistory={handleRemoveVideoFromHistory} // Pass this handler to Videos
-                        onClearHistory={handleClearHistory} // Pass this handler to Videos
+                        onRemoveVideoFromHistory={(videoId) => handleConfirmDialogOpen("removeHistory", videoId)}
                         isHistory={selectedCategory === "History"}
                     />
                 ) : (
@@ -298,6 +326,56 @@ const Feed = () => {
                     </Typography>
                 )}
             </Box>
+
+            <Dialog
+                open={confirmDialogOpen}
+                onClose={handleConfirmDialogClose}
+                aria-labelledby="confirmation-dialog-title"
+                aria-describedby="confirmation-dialog-description"
+                PaperProps={{
+                    style: {
+                        backgroundColor: '#333',
+                        color: 'white',
+                        borderRadius: '12px',
+                        padding: '24px',
+                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)',
+                    },
+                }}
+            >
+                <DialogTitle id="confirmation-dialog-title" sx={{ fontSize: '2.0rem', fontWeight: 'bold' }}>
+                    <RemoveCircleIcon sx={{ color: '#f44336', mr: 1, fontSize: '2.3rem' , marginBottom: '-2px'}} />
+                    Confirm Action
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="confirmation-dialog-description"
+                                       sx={{ color: 'white' }} // Set the text color to white
+                    >
+                        Are you sure you want to
+                        {dialogActionType === "removeHistory"
+                            ? " remove this video from your history"
+                            : dialogActionType === "removeFavorite"
+                                ? " remove this video from your favorites"
+                                : " clear all your history"
+                        }?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={handleConfirmDialogClose}
+                        sx={{ backgroundColor: 'white', color: 'red', borderColor: 'white', '&:hover': { backgroundColor: 'transparent',borderColor: 'red' } }}
+                        variant="outlined"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmAction}
+                        sx={{ backgroundColor: '#f44336', color: 'white', '&:hover': { backgroundColor: '#d32f2f' } }}
+                        variant="contained"
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Stack>
     );
 };
