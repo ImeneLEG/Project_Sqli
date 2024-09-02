@@ -12,13 +12,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from './ToggleColorMode';
-import Image from '../../../assets/logo.png';
-import logo from '../../UserPart/components/logo.svg'
+import Image from '../../UserPart/components/logo.svg';
 import { useNavigate } from 'react-router-dom';
+import logo from "../../UserPart/components/logo.svg";
 
 
 const logoStyle = {
-  width: '140px',
+  width: '50px',
   height: 'auto',
   cursor: 'pointer',
 };
@@ -91,13 +91,21 @@ function AppAppBar({ mode, toggleColorMode }) {
                 px: 0,
               }}
             >
-              <img
-                src={
-                  Image
-                }
-                style={logoStyle}
-                alt="logo of sitemark"
-              />
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <img src={logo} height={50} alt="logo" />
+                    <Typography
+                        variant='h6'
+                        sx={{
+                            color: 'black',
+                            fontSize: { xs: '20px', md: '30px' },
+                            lineHeight: '30px',
+                            marginLeft: '10px',
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        TrendyTube
+                    </Typography>
+                </Box>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <MenuItem
                   onClick={() => scrollToSection('features')}
@@ -147,8 +155,8 @@ function AppAppBar({ mode, toggleColorMode }) {
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
               <Button
                 color="primary"
-                variant="text"
-                size="small"
+                variant="outlined"
+                size="medium"
                 component="a"
                 onClick={()=>navigate('/login')}
                 target="_blank"
@@ -158,7 +166,7 @@ function AppAppBar({ mode, toggleColorMode }) {
               <Button
                 color="primary"
                 variant="contained"
-                size="small"
+                size="medium"
                 component="a"
                 onClick={()=>navigate('/signup')}
                 target="_blank"
