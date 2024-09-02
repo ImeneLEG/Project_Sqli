@@ -6,26 +6,28 @@ import { CheckCircle, Favorite, FavoriteBorder } from "@mui/icons-material";
 
 const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites, onRemoveVideoFromHistory, isHistory }) => {
     const [isFavorite, setIsFavorite] = useState(video.isFavorite || false);
-    // Check if thumbnail exists and replace 'default' with 'hqdefault'
-    const thumbnailUrl = video.thumbnail ? video.thumbnail.replace("default", "hqdefault") : '';
 
+    // Update isFavorite when video.isFavorite prop changes
     useEffect(() => {
         setIsFavorite(video.isFavorite);
     }, [video.isFavorite]);
 
+    // Handle favorite click action
     const handleFavoriteClick = () => {
         if (isFavorite) {
             onRemoveFromFavorites(video.videoId);
         } else {
             onAddToFavorites(video.videoId);
         }
-        setIsFavorite(!isFavorite);
     };
 
+    // Handle delete action from history
     const handleDeleteClick = () => {
         onRemoveVideoFromHistory(video.videoId);
     };
 
+    // Check if thumbnail exists and replace 'default' with 'hqdefault'
+    const thumbnailUrl = video.thumbnail ? video.thumbnail.replace("default", "hqdefault") : '';
 
     return (
         <Card
@@ -77,30 +79,32 @@ const VideoCard = ({ video, sidebarOpen, onAddToFavorites, onRemoveFromFavorites
                 )}
                 {isHistory && onRemoveVideoFromHistory && (
                     <IconButton
+                        aria-label="Delete from history"
                         onClick={handleDeleteClick}
                         sx={{
                             position: "absolute",
-                            bottom: "10px", // Adjusts the vertical positioning
-                            right: "50px", // Adjust this value to make sure it's in front of the heart icon
+                            bottom: "10px", 
+                            right: "50px", 
                             color: "red",
-                            zIndex: 10, // Ensures the delete icon is on top of other elements
+                            zIndex: 10, 
                         }}
                     >
                         <DeleteOutlineIcon />
                     </IconButton>
                 )}
                 <IconButton
+                    aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
                     onClick={handleFavoriteClick}
                     sx={{
                         position: "absolute",
                         bottom: "10px",
-                        right: isHistory ? "10px" : "50px", // Adjust positioning based on presence of delete icon
+                        right: isHistory ? "10px" : "50px",
                         backgroundColor: "rgba(255, 255, 255, 0.8)",
                         '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' },
-                        color: isFavorite ? 'red' : 'gray',
+                        color: isFavorite ? 'red' : 'gray', 
                     }}
                 >
-                    {isFavorite ? <Favorite /> : <FavoriteBorder />}
+                    {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder sx={{ color: 'gray' }} />}
                 </IconButton>
             </CardContent>
         </Card>
