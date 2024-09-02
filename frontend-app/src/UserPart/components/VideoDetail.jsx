@@ -77,6 +77,9 @@ const VideoDetail = () => {
                 <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center', marginBottom: '10px', color: 'white' }}>
                     {videoDetail.title}
                 </Typography>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center', marginBottom: '10px', color: 'white' }}>
+                    {videoDetail.description}
+                </Typography>
                 <Typography variant="body1" sx={{ textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', marginBottom: '20px', color: 'white' }}>
                     {videoDetail.channelTitle}
                     <CheckCircle sx={{ fontSize: '16px', color: '#ff6f61' }} />
