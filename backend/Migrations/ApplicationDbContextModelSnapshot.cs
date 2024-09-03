@@ -137,16 +137,16 @@ namespace Projet_Sqli.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 31, 11, 55, 8, 402, DateTimeKind.Local).AddTicks(1169),
+                            CreatedAt = new DateTime(2024, 9, 2, 18, 48, 3, 497, DateTimeKind.Local).AddTicks(1149),
                             Name = "user",
-                            UpdatedAt = new DateTime(2024, 8, 31, 11, 55, 8, 402, DateTimeKind.Local).AddTicks(1247)
+                            UpdatedAt = new DateTime(2024, 9, 2, 18, 48, 3, 497, DateTimeKind.Local).AddTicks(1208)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 31, 11, 55, 8, 402, DateTimeKind.Local).AddTicks(1253),
+                            CreatedAt = new DateTime(2024, 9, 2, 18, 48, 3, 497, DateTimeKind.Local).AddTicks(1210),
                             Name = "admin",
-                            UpdatedAt = new DateTime(2024, 8, 31, 11, 55, 8, 402, DateTimeKind.Local).AddTicks(1258)
+                            UpdatedAt = new DateTime(2024, 9, 2, 18, 48, 3, 497, DateTimeKind.Local).AddTicks(1212)
                         });
                 });
 
