@@ -1,0 +1,10 @@
+﻿# Visual Studio specific files
+.vs/
+*.vscode/
+
+bin/
+obj/
+.vs/slnx.sqlite
+.vs/ 
+"obj/" 
+".vs/" 
