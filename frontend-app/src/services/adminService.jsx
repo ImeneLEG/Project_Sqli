@@ -75,7 +75,9 @@ export const deleteUser = async (userId) => {
 // Nouvelle fonction pour récupérer les statistiques mensuelles des utilisateurs
 export const fetchMonthlyUserStats = async (year) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/stats/${year}`);
+      const response = await axios.get(`${API_BASE_URL}/Auth/stats/${year}`,{
+      params: { year }
+    });
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques mensuelles des utilisateurs', error);

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchAllUsers, registerUser, updateUser } from '../services/adminService';
+import { fetchAllUsers, registerUser, updateUser, deleteUser, fetchMonthlyUserStats } from '../services/adminService';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -10,6 +10,8 @@ const UserManagement = () => {
     const [dialogType, setDialogType] = useState(''); // 'add' or 'edit'
     const [currentUser, setCurrentUser] = useState(null);
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+    const [year, setYear] = useState(new Date().getFullYear()); // Default year is current year
+    const [monthlyStats, setMonthlyStats] = useState([]);
 
     useEffect(() => {
         fetchUsers();
@@ -62,7 +64,7 @@ const UserManagement = () => {
     const handleDelete = async (userId) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             try {
-                await deleteUser(userId); // You'll need to implement deleteUser
+                await deleteUser(userId);
                 fetchUsers();
             } catch (error) {
                 console.error('Failed to delete user', error);
@@ -70,10 +72,22 @@ const UserManagement = () => {
         }
     };
 
+    const handleFetchMonthlyStats = async () => {
+        try {
+            const stats = await fetchMonthlyUserStats(year);
+            setMonthlyStats(stats);
+        } catch (error) {
+            console.error('Failed to fetch monthly user stats', error);
+        }
+    };
+
     return (
         <Box sx={{ p: 3 }}>
             <Button variant="contained" color="primary" onClick={() => handleOpenDialog('add')}>
                 Add User
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleFetchMonthlyStats} sx={{ ml: 2 }}>
+                Show Monthly Stats
             </Button>
             <TableContainer component={Paper} sx={{ mt: 2 }}>
                 <Table>
@@ -102,6 +116,30 @@ const UserManagement = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {monthlyStats.length > 0 && (
+                <Box sx={{ mt: 4 }}>
+                    <Typography variant="h6">Monthly User Statistics for {year}</Typography>
+                    <TableContainer component={Paper} sx={{ mt: 2 }}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Month</TableCell>
+                                    <TableCell>User Count</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {monthlyStats.map((stat) => (
+                                    <TableRow key={`${stat.Year}-${stat.Month}`}>
+                                        <TableCell>{stat.Month}</TableCell>
+                                        <TableCell>{stat.UserCount}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+            )}
 
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>{dialogType === 'add' ? 'Add User' : 'Edit User'}</DialogTitle>
