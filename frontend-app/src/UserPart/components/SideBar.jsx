@@ -3,7 +3,7 @@ import { Stack } from '@mui/material';
 import { categories } from '../utils/constants';
 import './SideBar.css';
 
-const SideBar = ({ selectedCategory, setSelectedCategory, isAdmin }) => (
+const SideBar = ({ selectedCategory, setSelectedCategory }) => (
     <Stack
         direction='row'
         sx={{
@@ -12,33 +12,31 @@ const SideBar = ({ selectedCategory, setSelectedCategory, isAdmin }) => (
             flexDirection: { md: 'column' }
         }}
     >
-        {categories
-            .filter(category => !category.adminOnly || isAdmin) // Filter for admin categories
-            .map((category) => (
-                <button
-                    className='category-btn'
-                    onClick={() => setSelectedCategory(category.name)}
+        {categories.map((category) => (
+            <button
+                className='category-btn'
+                onClick={() => setSelectedCategory(category.name)} // Use the function here
+                style={{
+                    background: category.name === selectedCategory && '#fc1503',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center'
+                }}
+                key={category.name}
+            >
+                <span
                     style={{
-                        background: category.name === selectedCategory ? '#fc1503' : 'transparent',
-                        color: '#ffffff',
-                        display: 'flex',
-                        alignItems: 'center'
+                        marginRight: '10px',
+                        color: category.name === selectedCategory ? 'white' : 'red'
                     }}
-                    key={category.name}
                 >
-                    <span
-                        style={{
-                            marginRight: '10px',
-                            color: category.name === selectedCategory ? 'white' : 'red'
-                        }}
-                    >
-                        {category.icon}
-                    </span>
-                    <span style={{ opacity: category.name === selectedCategory ? '1' : '0.8' }}>
-                        {category.name}
-                    </span>
-                </button>
-            ))}
+                    {category.icon}
+                </span>
+                <span style={{ opacity: category.name === selectedCategory ? '1' : '0.8' }}>
+                    {category.name}
+                </span>
+            </button>
+        ))}
     </Stack>
 );
 

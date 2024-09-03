@@ -1,18 +1,18 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-// Exemple de fonction pour vérifier si l'utilisateur est administrateur
+// Cette fonction vérifie si l'utilisateur est admin
 const isAdmin = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  return user && user.role === 'admin'; // Suppose que le rôle de l'utilisateur est stocké sous forme d'objet
+  const token = localStorage.getItem('token');
+  if (!token) return false;
+
+  const user = JSON.parse(atob(token.split('.')[1])); // Décoder le payload JWT
+  return user && user.role === 'admin';
 };
 
+// Composant de protection des routes admin
 const AdminRoute = ({ children }) => {
-  if (!isAdmin()) {
-    return <Navigate to="/login" />;
-  }
-
-  return children;
+  return isAdmin() ? children : <Navigate to="/login" />;
 };
 
 export default AdminRoute;

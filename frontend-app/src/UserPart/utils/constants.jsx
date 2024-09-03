@@ -7,6 +7,6 @@ export const categories = [
   {name : 'Home', icon: <HomeIcon/>,},
   { name: 'History', icon: <HistoryIcon />, },
   { name: 'Favorites', icon: <FavoriteIcon />, },
-  { name: 'Admin Dashboard', icon: <FavoriteIcon />, adminOnly: true }, // New category
+  { name: 'Admin Dashboard', icon: <FavoriteIcon />,}, // New category
 ];
 

@@ -9,11 +9,35 @@ const VideoStatistics = () => {
 
   useEffect(() => {
     // Récupérer les statistiques vidéo
-    fetchVideoStatistics().then(stats => setStatistics(stats));
+    const fetchStatistics = async () => {
+      try {
+        const stats = await fetchVideoStatistics();
+        // Assurez-vous que stats est un tableau d'objets avec les propriétés `date` et `count`
+        if (Array.isArray(stats)) {
+          setStatistics(stats);
+        } else {
+          console.error('Les statistiques vidéo doivent être un tableau.');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des statistiques vidéo', error);
+      }
+    };
+
+    fetchStatistics();
   }, []);
 
-  const handleFetchTopVideos = () => {
-    fetchTopVideosByCountry(topX, countryCode).then(videos => setTopVideos(videos));
+  const handleFetchTopVideos = async () => {
+    try {
+      const videos = await fetchTopVideosByCountry(topX, countryCode);
+      // Assurez-vous que videos est un tableau d'objets avec la propriété `title`
+      if (Array.isArray(videos)) {
+        setTopVideos(videos);
+      } else {
+        console.error('Les vidéos top doivent être un tableau.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des vidéos top', error);
+    }
   };
 
   return (
@@ -22,19 +46,27 @@ const VideoStatistics = () => {
       <div>
         <h3>Nombre total de vidéos par jour</h3>
         <ul>
-          {statistics.map(stat => (
-            <li key={stat.date}>{stat.date}: {stat.count} vidéos</li>
+          {statistics.map((stat, index) => (
+            <li key={index}>{stat.date}: {stat.count} vidéos</li>
           ))}
         </ul>
       </div>
       <div>
         <h3>Top {topX} vidéos de {countryCode}</h3>
-        <input type="number" value={topX} onChange={(e) => setTopX(e.target.value)} />
-        <input type="text" value={countryCode} onChange={(e) => setCountryCode(e.target.value)} />
+        <input
+          type="number"
+          value={topX}
+          onChange={(e) => setTopX(Number(e.target.value))}
+        />
+        <input
+          type="text"
+          value={countryCode}
+          onChange={(e) => setCountryCode(e.target.value)}
+        />
         <button onClick={handleFetchTopVideos}>Rechercher</button>
         <ul>
-          {topVideos.map(video => (
-            <li key={video.id}>{video.title}</li>
+          {topVideos.map((video, index) => (
+            <li key={index}>{video.title}</li>
           ))}
         </ul>
       </div>

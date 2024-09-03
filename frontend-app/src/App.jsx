@@ -33,6 +33,8 @@ const AppWrapper = () => {
             <Route path="/video/:videoId" exact element={<VideoDetail />} />
             <Route path="/search/:searchTerm" exact element={<SearchFeed />} />
             <Route path="/user" exact element={<Feed />} />
+                      <Route path='/admin-dashboard' exact element={ <AdminDashboard />} />
+
           </Routes>
         </Box>
       ) : (
